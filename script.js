@@ -1,5 +1,5 @@
-const SUPABASE_URL = 'https://0ec90b57d6e95fcbda19832f.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJib2x0IiwicmVmIjoiMGVjOTBiNTdkNmU5NWZjYmRhMTk4MzJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4ODE1NzQsImV4cCI6MTc1ODg4MTU3NH0.9I8-U0x86Ak8t2DGaIk0HfvTSLsAyzdnz-Nw00mMkKw';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -79,7 +79,7 @@ function updateTotalScore() {
         recommendation = 'เฝ้าระวัง ทุก 4 ชั่วโมง';
     } else {
         totalScoreElement.classList.add('level-high');
-        recommendation = 'รายงานพยาบาล และพยาบาลประเมินซ้ำ';
+        recommendation = 'รีบงานพยาบาล และพยาบาลประเมินซ้ำ';
     }
 
     recommendationElement.textContent = recommendation;
@@ -171,6 +171,10 @@ function displayRecords(records) {
                     </div>
                 </div>
                 <div class="record-details">
+                    <div><strong>พฤติกรรม:</strong> ${record.behavior_score}</div>
+                    <div><strong>ไหลเวียนโลหิต:</strong> ${record.cardiovascular_score}</div>
+                    <div><strong>หายใจ:</strong> ${record.respiratory_score}</div>
+                    <div><strong>เสี่ยงเพิ่ม:</strong> ${record.additional_risk ? 'มี (+2)' : 'ไม่มี'}</div>
                     <div><strong>PEWS Score:</strong> <span style="color: #3b82f6; font-weight: 600;">${record.total_score}</span></div>
                     <div><strong>อาการเปลี่ยนแปลง:</strong> ${record.symptoms_changed === 'yes' ? 'มี' : 'ไม่มี'}</div>
                 </div>
