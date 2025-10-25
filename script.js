@@ -1,659 +1,227 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+let scores = {
+    behavior: null,
+    cardiovascular: null,
+    respiratory: null,
+    additionalRisk: false
+};
+
+let symptomsChanged = 'no';
+
+function initializeApp() {
+    const scoreButtons = document.querySelectorAll('.score-btn');
+    scoreButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const category = this.closest('.button-grid').dataset.category;
+            const score = parseInt(this.dataset.score);
+
+            const categoryButtons = this.closest('.button-grid').querySelectorAll('.score-btn');
+
+            if (this.classList.contains('active')) {
+                this.classList.remove('active');
+                scores[category] = null;
+            } else {
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                scores[category] = score;
+            }
+
+            updateTotalScore();
+        });
+    });
+
+    const additionalRiskCheckbox = document.getElementById('additionalRisk');
+    additionalRiskCheckbox.addEventListener('change', function() {
+        scores.additionalRisk = this.checked;
+        updateTotalScore();
+    });
+
+    const symptomButtons = document.querySelectorAll('.symptom-btn');
+    symptomButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            symptomButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            symptomsChanged = this.dataset.value;
+        });
+    });
+
+    updateTotalScore();
+    loadRecords();
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(135deg, #e0f2fe 0%, #f3f4f6 50%, #fef3c7 100%);
-    min-height: 100vh;
-    padding: 2rem 1rem;
-    line-height: 1.6;
+function calculateTotal() {
+    const behaviorScore = scores.behavior ?? 0;
+    const cardiovascularScore = scores.cardiovascular ?? 0;
+    const respiratoryScore = scores.respiratory ?? 0;
+    const additionalScore = scores.additionalRisk ? 2 : 0;
+    return behaviorScore + cardiovascularScore + respiratoryScore + additionalScore;
 }
 
-.container {
-    max-width: 1100px;
-    margin: 0 auto;
-}
+function updateTotalScore() {
+    const total = calculateTotal();
+    document.getElementById('scoreValue').textContent = total;
 
-header {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    padding: 2.5rem;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    border-top: 4px solid #3b82f6;
-}
+    const totalScoreElement = document.getElementById('totalScore');
+    const recommendationElement = document.getElementById('recommendation');
 
-h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1e3a8a;
-    margin-bottom: 0.5rem;
-}
+    totalScoreElement.classList.remove('level-low', 'level-medium', 'level-high');
 
-.subtitle {
-    color: #3b82f6;
-    font-weight: 500;
-    font-size: 1.2rem;
-}
-
-.card {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    padding: 2.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.hn-section {
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-    border-bottom: 2px solid #f3f4f6;
-}
-
-.hn-label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #374151;
-    margin-bottom: 0.5rem;
-}
-
-.hn-input {
-    width: 100%;
-    padding: 0.875rem 1rem;
-    border: 2px solid #d1d5db;
-    border-radius: 10px;
-    font-size: 1.125rem;
-    transition: all 0.2s ease;
-    outline: none;
-}
-
-.hn-input:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.score-section {
-    margin-bottom: 2.5rem;
-}
-
-.section-title {
-    font-size: 1.375rem;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.badge {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 0.875rem;
-    font-weight: 700;
-    flex-shrink: 0;
-}
-
-.badge-blue {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-}
-
-.badge-red {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-}
-
-.badge-purple {
-    background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
-}
-
-.button-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1rem;
-}
-
-.score-btn {
-    background: white;
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 1.25rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: left;
-    position: relative;
-    overflow: hidden;
-}
-
-.score-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 0 0 0 0;
-    border-color: transparent #3b82f6 transparent transparent;
-    transition: all 0.3s ease;
-}
-
-.score-btn.active::before {
-    border-width: 0 40px 40px 0;
-}
-
-.score-btn.active::after {
-    content: '';
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 10px;
-    height: 10px;
-    background: white;
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        opacity: 1;
-        transform: scale(1);
+    let recommendation = '';
+    if (total <= 1) {
+        totalScoreElement.classList.add('level-low');
+        recommendation = 'เฝ้าระวัง ทุก 12 ชั่วโมง';
+    } else if (total <= 3) {
+        totalScoreElement.classList.add('level-medium');
+        recommendation = 'เฝ้าระวัง ทุก 4 ชั่วโมง';
+    } else {
+        totalScoreElement.classList.add('level-high');
+        recommendation = 'รายงานพยาบาล และพยาบาลประเมินซ้ำ';
     }
-    50% {
-        opacity: 0.5;
-        transform: scale(1.2);
+
+    recommendationElement.textContent = recommendation;
+    document.getElementById('nursing').value = recommendation;
+}
+
+async function saveRecord(action) {
+    const hn = document.getElementById('hnInput').value.trim();
+    const nursing = document.getElementById('nursing').value;
+    const total = calculateTotal();
+
+    try {
+        const response = await fetch('/api/pews-records', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                hn: hn || 'ไม่ระบุ',
+                behaviorScore: scores.behavior ?? 0,
+                cardiovascularScore: scores.cardiovascular ?? 0,
+                respiratoryScore: scores.respiratory ?? 0,
+                additionalRisk: scores.additionalRisk,
+                totalScore: total,
+                nursingNotes: nursing,
+                symptomsChanged: symptomsChanged,
+                action: action
+            })
+        });
+
+        if (!response.ok) throw new Error('Failed to save record');
+
+        await loadRecords();
+        resetForm();
+        alert('บันทึกข้อมูลเรียบร้อยแล้ว');
+    } catch (error) {
+        console.error('Error saving record:', error);
+        alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
     }
 }
 
-.score-btn:hover {
-    border-color: #3b82f6;
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
-}
-
-.score-btn:active {
-    transform: translateY(-1px) scale(0.98);
-}
-
-.score-btn.active {
-    border-color: #3b82f6;
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-}
-
-.btn-label {
-    font-weight: 600;
-    color: #374151;
-    margin-bottom: 0.75rem;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    padding-right: 1rem;
-}
-
-.btn-score {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #3b82f6;
-}
-
-.checkbox-card {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    padding: 1.25rem;
-    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
-    border: 2px solid #fed7aa;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.checkbox-card:hover {
-    background: #ffedd5;
-    border-color: #fdba74;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(251, 146, 60, 0.2);
-}
-
-.checkbox-card input[type="checkbox"] {
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    accent-color: #f97316;
-}
-
-.checkbox-content {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
-.checkbox-label {
-    font-weight: 600;
-    color: #374151;
-    font-size: 0.95rem;
-}
-
-.checkbox-score {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #f97316;
-}
-
-.total-score {
-    padding: 1.75rem;
-    border-radius: 12px;
-    border: 2px solid;
-    margin-bottom: 2rem;
-    transition: all 0.3s ease;
-}
-
-.total-score.level-low {
-    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-    border-color: #86efac;
-    color: #166534;
-}
-
-.total-score.level-medium {
-    background: linear-gradient(135deg, #fef9c3 0%, #fef08a 100%);
-    border-color: #fde047;
-    color: #854d0e;
-}
-
-.total-score.level-high {
-    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-    border-color: #fca5a5;
-    color: #991b1b;
-}
-
-.score-display {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-}
-
-.alert-icon {
-    width: 32px;
-    height: 32px;
-    animation: pulse 2s infinite;
-}
-
-.score-text {
-    font-size: 1.5rem;
-    font-weight: 700;
-}
-
-#scoreValue {
-    font-size: 2rem;
-}
-
-.recommendation {
-    font-size: 1.125rem;
-    font-weight: 600;
-}
-
-.reference-table {
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    border: 2px solid #bfdbfe;
-    border-radius: 12px;
-    padding: 1.75rem;
-    margin-bottom: 2rem;
-}
-
-.reference-table h3 {
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 1.25rem;
-    font-size: 1rem;
-}
-
-.table-container {
-    overflow-x: auto;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.875rem;
-}
-
-thead {
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-}
-
-th {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: #1f2937;
-}
-
-th:first-child {
-    border-top-left-radius: 8px;
-}
-
-th:last-child {
-    border-top-right-radius: 8px;
-}
-
-td {
-    padding: 1rem;
-    border-bottom: 1px solid #e5e7eb;
-    color: #374151;
-}
-
-tbody tr {
-    background: white;
-    transition: background 0.2s ease;
-}
-
-tbody tr:hover {
-    background: #f9fafb;
-}
-
-tbody tr:last-child td {
-    border-bottom: none;
-}
-
-tbody tr:last-child td:first-child {
-    border-bottom-left-radius: 8px;
-}
-
-tbody tr:last-child td:last-child {
-    border-bottom-right-radius: 8px;
-}
-
-.record-form {
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 2px solid #f3f4f6;
-}
-
-.record-form h3 {
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 1.5rem;
-    font-size: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.form-icon {
-    width: 24px;
-    height: 24px;
-}
-
-.form-group {
-    margin-bottom: 1.75rem;
-}
-
-.form-group label {
-    display: block;
-    font-weight: 600;
-    color: #374151;
-    margin-bottom: 0.75rem;
-    font-size: 0.875rem;
-}
-
-textarea {
-    width: 100%;
-    padding: 1rem;
-    border: 2px solid #d1d5db;
-    border-radius: 10px;
-    font-family: inherit;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-    resize: vertical;
-}
-
-textarea:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.symptom-buttons {
-    display: flex;
-    gap: 1rem;
-}
-
-.symptom-btn {
-    flex: 1;
-    padding: 1.25rem 1.5rem;
-    border: 2px solid #d1d5db;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 1.125rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background: white;
-    color: #374151;
-}
-
-.symptom-btn:hover {
-    border-color: #9ca3af;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.symptom-btn.active[data-value="yes"] {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    border-color: #dc2626;
-    color: white;
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
-}
-
-.symptom-btn.active[data-value="no"] {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    border-color: #059669;
-    color: white;
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-}
-
-.action-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.action-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 1rem 1.75rem;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 1rem;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    flex: 1;
-    min-width: 140px;
-}
-
-.action-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-.action-btn:active {
-    transform: translateY(-1px) scale(0.98);
-}
-
-.btn-dc {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-}
-
-.btn-admit {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-}
-
-.btn-transfer {
-    background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
-}
-
-.btn-reset {
-    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-}
-
-.btn-icon {
-    width: 20px;
-    height: 20px;
-}
-
-.history-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 1.5rem;
-}
-
-.record-item {
-    background: #f9fafb;
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-}
-
-.record-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: start;
-    margin-bottom: 1rem;
-}
-
-.record-info {
-    flex: 1;
-}
-
-.record-timestamp {
-    font-size: 0.875rem;
-    font-family: 'Courier New', monospace;
-    color: #6b7280;
-    margin-bottom: 0.25rem;
-}
-
-.record-hn {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #374151;
-}
-
-.record-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.record-action {
-    padding: 0.375rem 0.875rem;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: white;
-}
-
-.action-dc {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-}
-
-.action-admit {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-}
-
-.action-transfer {
-    background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
-}
-
-.delete-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-    color: #ef4444;
-    transition: all 0.2s ease;
-    border-radius: 6px;
-}
-
-.delete-btn:hover {
-    background: #fee2e2;
-    transform: scale(1.1);
-}
-
-.delete-icon {
-    width: 18px;
-    height: 18px;
-}
-
-.record-details {
-    margin-bottom: 0.75rem;
-    font-size: 0.875rem;
-    color: #374151;
-}
-
-.record-details div {
-    margin-bottom: 0.25rem;
-}
-
-.record-nursing {
-    background: white;
-    padding: 0.875rem;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    color: #374151;
-}
-
-@media (max-width: 768px) {
-    body {
-        padding: 1rem 0.5rem;
-    }
-
-    header {
-        padding: 1.5rem;
-    }
-
-    h1 {
-        font-size: 2rem;
-    }
-
-    .card {
-        padding: 1.5rem;
-    }
-
-    .button-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .symptom-buttons {
-        flex-direction: column;
-    }
-
-    .action-buttons {
-        flex-direction: column;
-    }
-
-    .action-btn {
-        width: 100%;
+async function loadRecords() {
+    try {
+        const response = await fetch('/api/pews-records');
+        if (!response.ok) throw new Error('Failed to load records');
+        
+        const data = await response.json();
+        displayRecords(data || []);
+    } catch (error) {
+        console.error('Error loading records:', error);
     }
 }
+
+function displayRecords(records) {
+    const recordsHistory = document.getElementById('recordsHistory');
+    const recordsList = document.getElementById('recordsList');
+
+    if (records.length === 0) {
+        recordsHistory.style.display = 'none';
+        return;
+    }
+
+    recordsHistory.style.display = 'block';
+
+    recordsList.innerHTML = records.map(record => {
+        const timestamp = new Date(record.createdAt).toLocaleString('th-TH', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+
+        return `
+            <div class="record-item">
+                <div class="record-header">
+                    <div class="record-info">
+                        <div class="record-timestamp">${timestamp}</div>
+                        <div class="record-hn">HN: ${record.hn}</div>
+                    </div>
+                    <div class="record-actions">
+                        <div class="record-action action-${record.action.toLowerCase()}">${record.action}</div>
+                        <button class="delete-btn" onclick="deleteRecord('${record.id}')">
+                            <svg class="delete-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="record-details">
+                    <div><strong>PEWS Score:</strong> <span style="color: #3b82f6; font-weight: 600;">${record.totalScore}</span></div>
+                    <div><strong>อาการเปลี่ยนแปลง:</strong> ${record.symptomsChanged === 'yes' ? 'มี' : 'ไม่มี'}</div>
+                </div>
+                ${record.nursingNotes ? `
+                    <div class="record-nursing">
+                        <strong>การพยาบาล:</strong> ${record.nursingNotes}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+async function deleteRecord(id) {
+    if (!confirm('ต้องการลบรายการนี้หรือไม่?')) return;
+
+    try {
+        const response = await fetch(`/api/pews-records/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) throw new Error('Failed to delete record');
+
+        await loadRecords();
+        alert('ลบรายการเรียบร้อยแล้ว');
+    } catch (error) {
+        console.error('Error deleting record:', error);
+        alert('เกิดข้อผิดพลาดในการลบข้อมูล');
+    }
+}
+
+function resetForm() {
+    scores = {
+        behavior: null,
+        cardiovascular: null,
+        respiratory: null,
+        additionalRisk: false
+    };
+
+    document.querySelectorAll('.score-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    document.getElementById('additionalRisk').checked = false;
+    document.getElementById('hnInput').value = '';
+    document.getElementById('nursing').value = '';
+
+    const symptomButtons = document.querySelectorAll('.symptom-btn');
+    symptomButtons.forEach(btn => btn.classList.remove('active'));
+    document.querySelector('.symptom-btn[data-value="no"]').classList.add('active');
+    symptomsChanged = 'no';
+
+    updateTotalScore();
+}
+
+document.addEventListener('DOMContentLoaded', initializeApp);
