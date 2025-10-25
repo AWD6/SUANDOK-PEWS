@@ -1,8 +1,3 @@
-const SUPABASE_URL = 'https://0ec90b57d6e95fcbda19832f.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJib2x0IiwicmVmIjoiMGVjOTBiNTdkNmU5NWZjYmRhMTk4MzJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4ODE1NzQsImV4cCI6MTc1ODg4MTU3NH0.9I8-U0x86Ak8t2DGaIk0HfvTSLsAyzdnz-Nw00mMkKw';
-
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 let scores = {
     behavior: null,
     cardiovascular: null,
@@ -92,22 +87,29 @@ async function saveRecord(action) {
     const total = calculateTotal();
 
     try {
-        const { error } = await supabase.from('pews_records').insert({
-            hn: hn || 'ไม่ระบุ',
-            behavior_score: scores.behavior ?? 0,
-            cardiovascular_score: scores.cardiovascular ?? 0,
-            respiratory_score: scores.respiratory ?? 0,
-            additional_risk: scores.additionalRisk,
-            total_score: total,
-            nursing_notes: nursing,
-            symptoms_changed: symptomsChanged,
-            action: action
+        const response = await fetch('/api/pews-records', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                hn: hn || 'ไม่ระบุ',
+                behaviorScore: scores.behavior ?? 0,
+                cardiovascularScore: scores.cardiovascular ?? 0,
+                respiratoryScore: scores.respiratory ?? 0,
+                additionalRisk: scores.additionalRisk,
+                totalScore: total,
+                nursingNotes: nursing,
+                symptomsChanged: symptomsChanged,
+                action: action
+            })
         });
 
-        if (error) throw error;
+        if (!response.ok) throw new Error('Failed to save record');
 
         await loadRecords();
         resetForm();
+        alert('บันทึกข้อมูลเรียบร้อยแล้ว');
     } catch (error) {
         console.error('Error saving record:', error);
         alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
@@ -116,14 +118,10 @@ async function saveRecord(action) {
 
 async function loadRecords() {
     try {
-        const { data, error } = await supabase
-            .from('pews_records')
-            .select('*')
-            .order('created_at', { ascending: false })
-            .limit(20);
-
-        if (error) throw error;
-
+        const response = await fetch('/api/pews-records');
+        if (!response.ok) throw new Error('Failed to load records');
+        
+        const data = await response.json();
         displayRecords(data || []);
     } catch (error) {
         console.error('Error loading records:', error);
@@ -142,7 +140,7 @@ function displayRecords(records) {
     recordsHistory.style.display = 'block';
 
     recordsList.innerHTML = records.map(record => {
-        const timestamp = new Date(record.timestamp).toLocaleString('th-TH', {
+        const timestamp = new Date(record.createdAt).toLocaleString('th-TH', {
             year: 'numeric',
             month: '2-digit',
             day: '2-digit',
@@ -171,12 +169,12 @@ function displayRecords(records) {
                     </div>
                 </div>
                 <div class="record-details">
-                    <div><strong>PEWS Score:</strong> <span style="color: #3b82f6; font-weight: 600;">${record.total_score}</span></div>
-                    <div><strong>อาการเปลี่ยนแปลง:</strong> ${record.symptoms_changed === 'yes' ? 'มี' : 'ไม่มี'}</div>
+                    <div><strong>PEWS Score:</strong> <span style="color: #3b82f6; font-weight: 600;">${record.totalScore}</span></div>
+                    <div><strong>อาการเปลี่ยนแปลง:</strong> ${record.symptomsChanged === 'yes' ? 'มี' : 'ไม่มี'}</div>
                 </div>
-                ${record.nursing_notes ? `
+                ${record.nursingNotes ? `
                     <div class="record-nursing">
-                        <strong>การพยาบาล:</strong> ${record.nursing_notes}
+                        <strong>การพยาบาล:</strong> ${record.nursingNotes}
                     </div>
                 ` : ''}
             </div>
@@ -188,14 +186,14 @@ async function deleteRecord(id) {
     if (!confirm('ต้องการลบรายการนี้หรือไม่?')) return;
 
     try {
-        const { error } = await supabase
-            .from('pews_records')
-            .delete()
-            .eq('id', id);
+        const response = await fetch(`/api/pews-records/${id}`, {
+            method: 'DELETE'
+        });
 
-        if (error) throw error;
+        if (!response.ok) throw new Error('Failed to delete record');
 
         await loadRecords();
+        alert('ลบรายการเรียบร้อยแล้ว');
     } catch (error) {
         console.error('Error deleting record:', error);
         alert('เกิดข้อผิดพลาดในการลบข้อมูล');
