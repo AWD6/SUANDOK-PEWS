@@ -1,3 +1,4 @@
+
 let scores = {
     behavior: null,
     cardiovascular: null,
@@ -81,51 +82,42 @@ function updateTotalScore() {
     document.getElementById('nursing').value = recommendation;
 }
 
-async function saveRecord(action) {
+function saveRecord(action) {
     const hn = document.getElementById('hnInput').value.trim();
     const nursing = document.getElementById('nursing').value;
     const total = calculateTotal();
 
-    try {
-        const response = await fetch('/api/pews-records', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                hn: hn || 'ไม่ระบุ',
-                behaviorScore: scores.behavior ?? 0,
-                cardiovascularScore: scores.cardiovascular ?? 0,
-                respiratoryScore: scores.respiratory ?? 0,
-                additionalRisk: scores.additionalRisk,
-                totalScore: total,
-                nursingNotes: nursing,
-                symptomsChanged: symptomsChanged,
-                action: action
-            })
-        });
+    const record = {
+        id: Date.now().toString(),
+        hn: hn || 'ไม่ระบุ',
+        behaviorScore: scores.behavior ?? 0,
+        cardiovascularScore: scores.cardiovascular ?? 0,
+        respiratoryScore: scores.respiratory ?? 0,
+        additionalRisk: scores.additionalRisk,
+        totalScore: total,
+        nursingNotes: nursing,
+        symptomsChanged: symptomsChanged,
+        action: action,
+        createdAt: new Date().toISOString()
+    };
 
-        if (!response.ok) throw new Error('Failed to save record');
+    // ดึงข้อมูลเดิมจาก LocalStorage
+    let records = JSON.parse(localStorage.getItem('pewsRecords') || '[]');
+    
+    // เพิ่มข้อมูลใหม่
+    records.unshift(record);
+    
+    // บันทึกกลับเข้า LocalStorage
+    localStorage.setItem('pewsRecords', JSON.stringify(records));
 
-        await loadRecords();
-        resetForm();
-        alert('บันทึกข้อมูลเรียบร้อยแล้ว');
-    } catch (error) {
-        console.error('Error saving record:', error);
-        alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
-    }
+    loadRecords();
+    resetForm();
+    alert('บันทึกข้อมูลเรียบร้อยแล้ว');
 }
 
-async function loadRecords() {
-    try {
-        const response = await fetch('/api/pews-records');
-        if (!response.ok) throw new Error('Failed to load records');
-        
-        const data = await response.json();
-        displayRecords(data || []);
-    } catch (error) {
-        console.error('Error loading records:', error);
-    }
+function loadRecords() {
+    const records = JSON.parse(localStorage.getItem('pewsRecords') || '[]');
+    displayRecords(records);
 }
 
 function displayRecords(records) {
@@ -182,22 +174,15 @@ function displayRecords(records) {
     }).join('');
 }
 
-async function deleteRecord(id) {
+function deleteRecord(id) {
     if (!confirm('ต้องการลบรายการนี้หรือไม่?')) return;
 
-    try {
-        const response = await fetch(`/api/pews-records/${id}`, {
-            method: 'DELETE'
-        });
+    let records = JSON.parse(localStorage.getItem('pewsRecords') || '[]');
+    records = records.filter(record => record.id !== id);
+    localStorage.setItem('pewsRecords', JSON.stringify(records));
 
-        if (!response.ok) throw new Error('Failed to delete record');
-
-        await loadRecords();
-        alert('ลบรายการเรียบร้อยแล้ว');
-    } catch (error) {
-        console.error('Error deleting record:', error);
-        alert('เกิดข้อผิดพลาดในการลบข้อมูล');
-    }
+    loadRecords();
+    alert('ลบรายการเรียบร้อยแล้ว');
 }
 
 function resetForm() {
