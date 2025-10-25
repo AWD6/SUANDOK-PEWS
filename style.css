@@ -509,7 +509,7 @@ textarea:focus {
 }
 
 .btn-transfer {
-    background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+    background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
 }
 
 .btn-reset {
@@ -583,7 +583,7 @@ textarea:focus {
 }
 
 .action-transfer {
-    background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+    background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
 }
 
 .delete-btn {
