@@ -39,6 +39,19 @@ let state = {
 document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     loadRecords();
+    updateTotalScore();
+    
+    // Show body after fonts loaded
+    if (document.fonts) {
+        document.fonts.ready.then(function() {
+            document.body.classList.add('loaded');
+        });
+    } else {
+        // Fallback for browsers without font loading API
+        setTimeout(function() {
+            document.body.classList.add('loaded');
+        }, 100);
+    }
 });
 
 function setupEventListeners() {
