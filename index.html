@@ -1,121 +1,181 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUANDOK PEWS - Pediatric Early Warning Signs</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
-        <header class="header">
-            <h1>SUANDOK PEWS</h1>
-            <p class="subtitle">Pediatric Early Warning Signs Assessment</p>
-        </header>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SUANDOK PEWS - Pediatric Early Warning Signs</title>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            /* Prevent FOUC (Flash of Unstyled Content) */
+            body {
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+            body.loaded {
+                opacity: 1;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header class="header">
+                <h1>SUANDOK PEWS</h1>
+                <p class="subtitle">Pediatric Early Warning Signs Assessment</p>
+            </header>
 
-        <main class="main-content">
-            <!-- Patient Information -->
-            <section class="card">
-                <h2>ข้อมูลผู้ป่วย</h2>
-                <div class="form-group">
-                    <label>HN:</label>
-                    <input type="text" id="hn" placeholder="กรอก HN">
+            <main class="main-content">
+                <!-- Patient Information -->
+                <section class="card">
+                    <h2>ข้อมูลผู้ป่วย</h2>
+                    <div class="form-group">
+                        <label>HN:</label>
+                        <input type="text" id="hn" placeholder="กรอก HN" />
+                    </div>
+                    <div class="form-group">
+                        <label>AN:</label>
+                        <input
+                            type="text"
+                            id="an"
+                            placeholder="กรอก AN (ถ้ามี)"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label>ชื่อ-สกุล:</label>
+                        <input
+                            type="text"
+                            id="patientName"
+                            placeholder="กรอกชื่อ-สกุล"
+                        />
+                    </div>
+                </section>
+
+                <!-- Age Selection -->
+                <section class="card">
+                    <h2>เลือกช่วงอายุ</h2>
+                    <div class="age-buttons">
+                        <button class="age-btn" data-age="newborn">
+                            Newborn (0-1 เดือน)
+                        </button>
+                        <button class="age-btn" data-age="infant">
+                            Infant (1-12 เดือน)
+                        </button>
+                        <button class="age-btn" data-age="child">
+                            Child (1-4 ปี)
+                        </button>
+                        <button class="age-btn" data-age="older">
+                            Child (4-12 ปี)
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Behavior Scoring -->
+                <section class="card">
+                    <h3>Behavior (พฤติกรรม)</h3>
+                    <div class="score-buttons">
+                        <button
+                            class="score-btn"
+                            data-category="behavior"
+                            data-score="0"
+                        >
+                            0 - Playing/appropriate
+                        </button>
+                        <button
+                            class="score-btn"
+                            data-category="behavior"
+                            data-score="1"
+                        >
+                            1 - Sleeping
+                        </button>
+                        <button
+                            class="score-btn"
+                            data-category="behavior"
+                            data-score="2"
+                        >
+                            2 - Irritable
+                        </button>
+                        <button
+                            class="score-btn"
+                            data-category="behavior"
+                            data-score="3"
+                        >
+                            3 - Lethargic/confused
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Cardiovascular Scoring -->
+                <section class="card">
+                    <h3>Cardiovascular (หัวใจและหลอดเลือด)</h3>
+                    <div class="score-buttons" id="cardiovascularButtons">
+                        <!-- Will be populated by JavaScript based on age -->
+                    </div>
+                </section>
+
+                <!-- Respiratory Scoring -->
+                <section class="card">
+                    <h3>Respiratory (การหายใจ)</h3>
+                    <div class="score-buttons" id="respiratoryButtons">
+                        <!-- Will be populated by JavaScript based on age -->
+                    </div>
+                </section>
+
+                <!-- Additional Risk Factors -->
+                <section class="card">
+                    <h3>Additional Risk Factors</h3>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="postOp" value="2" />
+                            Post-operative patient (<24 hrs) (+2)
+                        </label>
+                        <label class="checkbox-label">
+                            <input
+                                type="checkbox"
+                                id="chronicDisease"
+                                value="2"
+                            />
+                            Concern from nurse or parent (+2)
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="trauma" value="2" />
+                            Trauma patient (+2)
+                        </label>
+                    </div>
+                </section>
+
+                <!-- Total Score Display -->
+                <section class="total-score-card">
+                    <h2>คะแนนรวม PEWS</h2>
+                    <div class="total-score" id="totalScore">0</div>
+                    <div class="score-level" id="scoreLevel">ปกติ</div>
+                    <div class="recommendation" id="recommendation">
+                        ไม่ต้องดำเนินการพิเศษ
+                    </div>
+                </section>
+
+                <!-- Save Button -->
+                <div class="action-buttons">
+                    <button class="btn-primary" id="saveBtn">
+                        บันทึกข้อมูล
+                    </button>
+                    <button class="btn-secondary" id="resetBtn">รีเซ็ต</button>
                 </div>
-                <div class="form-group">
-                    <label>AN:</label>
-                    <input type="text" id="an" placeholder="กรอก AN (ถ้ามี)">
-                </div>
-                <div class="form-group">
-                    <label>ชื่อ-สกุล:</label>
-                    <input type="text" id="patientName" placeholder="กรอกชื่อ-สกุล">
-                </div>
-            </section>
 
-            <!-- Age Selection -->
-            <section class="card">
-                <h2>เลือกช่วงอายุ</h2>
-                <div class="age-buttons">
-                    <button class="age-btn" data-age="newborn">Newborn (0-1 เดือน)</button>
-                    <button class="age-btn" data-age="infant">Infant (1-12 เดือน)</button>
-                    <button class="age-btn" data-age="child">Child (1-4 ปี)</button>
-                    <button class="age-btn" data-age="older">Child (4-12 ปี)</button>
-                </div>
-            </section>
+                <!-- Records History -->
+                <section class="card">
+                    <h2>ประวัติการบันทึก</h2>
+                    <div id="recordsList" class="records-list">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </section>
+            </main>
+        </div>
 
-            <!-- Behavior Scoring -->
-            <section class="card">
-                <h3>Behavior (พฤติกรรม)</h3>
-                <div class="score-buttons">
-                    <button class="score-btn" data-category="behavior" data-score="0">0 - Playing/appropriate</button>
-                    <button class="score-btn" data-category="behavior" data-score="1">1 - Sleeping</button>
-                    <button class="score-btn" data-category="behavior" data-score="2">2 - Irritable</button>
-                    <button class="score-btn" data-category="behavior" data-score="3">3 - Lethargic/confused</button>
-                </div>
-            </section>
-
-            <!-- Cardiovascular Scoring -->
-            <section class="card">
-                <h3>Cardiovascular (หัวใจและหลอดเลือด)</h3>
-                <div class="score-buttons" id="cardiovascularButtons">
-                    <!-- Will be populated by JavaScript based on age -->
-                </div>
-            </section>
-
-            <!-- Respiratory Scoring -->
-            <section class="card">
-                <h3>Respiratory (การหายใจ)</h3>
-                <div class="score-buttons" id="respiratoryButtons">
-                    <!-- Will be populated by JavaScript based on age -->
-                </div>
-            </section>
-
-            <!-- Additional Risk Factors -->
-            <section class="card">
-                <h3>Additional Risk Factors</h3>
-                <div class="checkbox-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="postOp" value="2">
-                        Post-operative patient (<24 hrs) (+2)
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="chronicDisease" value="2">
-                        Concern from nurse or parent (+2)
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="trauma" value="2">
-                        Trauma patient (+2)
-                    </label>
-                </div>
-            </section>
-
-            <!-- Total Score Display -->
-            <section class="total-score-card">
-                <h2>คะแนนรวม PEWS</h2>
-                <div class="total-score" id="totalScore">0</div>
-                <div class="score-level" id="scoreLevel">ปกติ</div>
-                <div class="recommendation" id="recommendation">ไม่ต้องดำเนินการพิเศษ</div>
-            </section>
-
-            <!-- Save Button -->
-            <div class="action-buttons">
-                <button class="btn-primary" id="saveBtn">บันทึกข้อมูล</button>
-                <button class="btn-secondary" id="resetBtn">รีเซ็ต</button>
-            </div>
-
-            <!-- Records History -->
-            <section class="card">
-                <h2>ประวัติการบันทึก</h2>
-                <div id="recordsList" class="records-list">
-                    <!-- Will be populated by JavaScript -->
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <script src="script.js"></script>
-</body>
+        <script src="script.js"></script>
+    </body>
 </html>
