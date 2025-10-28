@@ -6,227 +6,113 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SUANDOK PEWS - Pediatric Early Warning Signs</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <header>
+        <header class="header">
             <h1>SUANDOK PEWS</h1>
-            <p class="subtitle">Pediatric Early Warning Signs</p>
+            <p class="subtitle">Pediatric Early Warning Signs Assessment</p>
         </header>
 
-        <main>
-            <div class="card">
-                <div class="hn-section">
-                    <label class="hn-label">เลข HN ผู้ป่วย</label>
-                    <input type="text" id="hnInput" placeholder="กรอกเลข HN (ไม่บังคับ)" class="hn-input">
+        <main class="main-content">
+            <!-- Patient Information -->
+            <section class="card">
+                <h2>ข้อมูลผู้ป่วย</h2>
+                <div class="form-group">
+                    <label>HN:</label>
+                    <input type="text" id="hn" placeholder="กรอก HN">
                 </div>
+                <div class="form-group">
+                    <label>AN:</label>
+                    <input type="text" id="an" placeholder="กรอก AN (ถ้ามี)">
+                </div>
+                <div class="form-group">
+                    <label>ชื่อ-สกุล:</label>
+                    <input type="text" id="patientName" placeholder="กรอกชื่อ-สกุล">
+                </div>
+            </section>
 
-                <section class="score-section">
-                    <h2 class="section-title">
-                        <span class="badge badge-blue">1</span>
-                        พฤติกรรม
-                    </h2>
-                    <div class="button-grid" data-category="behavior">
-                        <button class="score-btn" data-score="0">
-                            <div class="btn-label">เล่นเหมาะสม</div>
-                            <div class="btn-score">0</div>
-                        </button>
-                        <button class="score-btn" data-score="1">
-                            <div class="btn-label">หลับ</div>
-                            <div class="btn-score">1</div>
-                        </button>
-                        <button class="score-btn" data-score="2">
-                            <div class="btn-label">ร้องไห้งอแง พักไม่ได้</div>
-                            <div class="btn-score">2</div>
-                        </button>
-                        <button class="score-btn" data-score="3">
-                            <div class="btn-label">ซึม/สับสน หรือ ตอบสนองต่อการกระตุ้นความปวดลดลง</div>
-                            <div class="btn-score">3</div>
-                        </button>
-                    </div>
-                </section>
+            <!-- Age Selection -->
+            <section class="card">
+                <h2>เลือกช่วงอายุ</h2>
+                <div class="age-buttons">
+                    <button class="age-btn" data-age="newborn">Newborn (0-1 เดือน)</button>
+                    <button class="age-btn" data-age="infant">Infant (1-12 เดือน)</button>
+                    <button class="age-btn" data-age="child">Child (1-4 ปี)</button>
+                    <button class="age-btn" data-age="older">Child (4-12 ปี)</button>
+                </div>
+            </section>
 
-                <section class="score-section">
-                    <h2 class="section-title">
-                        <span class="badge badge-red">2</span>
-                        ระบบไหลเวียนโลหิต
-                    </h2>
-                    <div class="button-grid" data-category="cardiovascular">
-                        <button class="score-btn" data-score="0">
-                            <div class="btn-label">ผิวสีชมพูดี หรือ CRT 1-2 วินาที</div>
-                            <div class="btn-score">0</div>
-                        </button>
-                        <button class="score-btn" data-score="1">
-                            <div class="btn-label">ผิวสีซีด หรือ CRT 3 วินาที</div>
-                            <div class="btn-score">1</div>
-                        </button>
-                        <button class="score-btn" data-score="2">
-                            <div class="btn-label">ผิวสีเทา หรือ CRT 4 วินาที หรือ ชีพจรเร็ว +20 ครั้ง/นาที</div>
-                            <div class="btn-score">2</div>
-                        </button>
-                        <button class="score-btn" data-score="3">
-                            <div class="btn-label">ผิวสีเทาและตัวลาย หรือ CRT ≥5 วินาที หรือ ชีพจรเร็ว +30 ครั้ง/นาที หรือ ชีพจรช้า</div>
-                            <div class="btn-score">3</div>
-                        </button>
-                    </div>
-                </section>
+            <!-- Behavior Scoring -->
+            <section class="card">
+                <h3>Behavior (พฤติกรรม)</h3>
+                <div class="score-buttons">
+                    <button class="score-btn" data-category="behavior" data-score="0">0 - Playing/appropriate</button>
+                    <button class="score-btn" data-category="behavior" data-score="1">1 - Sleeping</button>
+                    <button class="score-btn" data-category="behavior" data-score="2">2 - Irritable</button>
+                    <button class="score-btn" data-category="behavior" data-score="3">3 - Lethargic/confused</button>
+                </div>
+            </section>
 
-                <section class="score-section">
-                    <h2 class="section-title">
-                        <span class="badge badge-purple">3</span>
-                        ระบบทางเดินหายใจ
-                    </h2>
-                    <div class="button-grid" data-category="respiratory">
-                        <button class="score-btn" data-score="0">
-                            <div class="btn-label">อยู่ในช่วงค่าปกติ/ไม่มี retraction</div>
-                            <div class="btn-score">0</div>
-                        </button>
-                        <button class="score-btn" data-score="1">
-                            <div class="btn-label">หายใจเร็ว +10 ครั้ง/นาที/ใช้กล้ามเนื้อช่วย หรือ FiO2 ≥30% หรือ O2 ≥4 LPM</div>
-                            <div class="btn-score">1</div>
-                        </button>
-                        <button class="score-btn" data-score="2">
-                            <div class="btn-label">หายใจเร็ว +20 ครั้ง/นาที และมี retractions หรือ FiO2 ≥40% หรือ O2 ≥6 LPM</div>
-                            <div class="btn-score">2</div>
-                        </button>
-                        <button class="score-btn" data-score="3">
-                            <div class="btn-label">หายใจช้า -5 ครั้ง + retraction + grunting หรือ FiO2 ≥50% หรือ O2 ≥8 LPM</div>
-                            <div class="btn-score">3</div>
-                        </button>
-                    </div>
-                </section>
+            <!-- Cardiovascular Scoring -->
+            <section class="card">
+                <h3>Cardiovascular (หัวใจและหลอดเลือด)</h3>
+                <div class="score-buttons" id="cardiovascularButtons">
+                    <!-- Will be populated by JavaScript based on age -->
+                </div>
+            </section>
 
-                <section class="score-section">
-                    <label class="checkbox-card">
-                        <input type="checkbox" id="additionalRisk">
-                        <div class="checkbox-content">
-                            <span class="checkbox-label">พ่นยาละอองฝอยทุก 15 นาที หรือมีอาการอาเจียนต่อเนื่องหลังผ่าตัด</span>
-                            <span class="checkbox-score">+2</span>
-                        </div>
+            <!-- Respiratory Scoring -->
+            <section class="card">
+                <h3>Respiratory (การหายใจ)</h3>
+                <div class="score-buttons" id="respiratoryButtons">
+                    <!-- Will be populated by JavaScript based on age -->
+                </div>
+            </section>
+
+            <!-- Additional Risk Factors -->
+            <section class="card">
+                <h3>Additional Risk Factors</h3>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="postOp" value="2">
+                        Post-operative patient (<24 hrs) (+2)
                     </label>
-                </section>
-
-                <div class="total-score level-low" id="totalScore">
-                    <div class="score-display">
-                        <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                        <div class="score-text">คะแนนรวม: <span id="scoreValue">0</span></div>
-                    </div>
-                    <div class="recommendation" id="recommendation">เฝ้าระวัง ทุก 12 ชั่วโมง</div>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="chronicDisease" value="2">
+                        Concern from nurse or parent (+2)
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="trauma" value="2">
+                        Trauma patient (+2)
+                    </label>
                 </div>
+            </section>
 
-                <div class="reference-table">
-                    <h3>ค่าปกติตามช่วงอายุสำหรับการหายใจและชีพจรในการประเมิน PEWS</h3>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>อายุ</th>
-                                    <th>ชีพจรขณะพัก (ครั้ง/นาที)</th>
-                                    <th>อัตราการหายใจขณะพัก (ครั้ง/นาที)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Newborn (แรกเกิด-1 เดือน)</td>
-                                    <td>100-180</td>
-                                    <td>40-60</td>
-                                </tr>
-                                <tr>
-                                    <td>Infant (1-12 เดือน)</td>
-                                    <td>100-180</td>
-                                    <td>35-40</td>
-                                </tr>
-                                <tr>
-                                    <td>Toddler (13 เดือน - 3 ปี)</td>
-                                    <td>70-110</td>
-                                    <td>25-30</td>
-                                </tr>
-                                <tr>
-                                    <td>Preschool (4-6 ปี)</td>
-                                    <td>70-110</td>
-                                    <td>21-23</td>
-                                </tr>
-                                <tr>
-                                    <td>School age (7-12 ปี)</td>
-                                    <td>70-110</td>
-                                    <td>19-21</td>
-                                </tr>
-                                <tr>
-                                    <td>Adolescent (13-19 ปี)</td>
-                                    <td>55-90</td>
-                                    <td>16-18</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <!-- Total Score Display -->
+            <section class="total-score-card">
+                <h2>คะแนนรวม PEWS</h2>
+                <div class="total-score" id="totalScore">0</div>
+                <div class="score-level" id="scoreLevel">ปกติ</div>
+                <div class="recommendation" id="recommendation">ไม่ต้องดำเนินการพิเศษ</div>
+            </section>
 
-                <div class="record-form">
-                    <h3>
-                        <svg class="form-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                        </svg>
-                        บันทึกข้อมูล
-                    </h3>
-
-                    <div class="form-group">
-                        <label>การพยาบาล</label>
-                        <textarea id="nursing" rows="3" placeholder="บันทึกการพยาบาล..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>อาการเปลี่ยนแปลงขณะรอตรวจ</label>
-                        <div class="symptom-buttons">
-                            <button class="symptom-btn" data-value="yes">มี</button>
-                            <button class="symptom-btn active" data-value="no">ไม่มี</button>
-                        </div>
-                    </div>
-
-                    <div class="action-buttons">
-                        <button class="action-btn btn-dc" onclick="saveRecord('DC')">
-                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="8.5" cy="7" r="4"></circle>
-                                <polyline points="17 11 19 13 23 9"></polyline>
-                            </svg>
-                            D/C
-                        </button>
-                        <button class="action-btn btn-admit" onclick="saveRecord('Admit')">
-                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                            </svg>
-                            Admit
-                        </button>
-                        <button class="action-btn btn-transfer" onclick="saveRecord('Transfer')">
-                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                <polyline points="12 5 19 12 12 19"></polyline>
-                            </svg>
-                            ส่งต่อ
-                        </button>
-                        <button class="action-btn btn-reset" onclick="resetForm()">
-                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="1 4 1 10 7 10"></polyline>
-                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-                            </svg>
-                            รีเซ็ต
-                        </button>
-                    </div>
-                </div>
+            <!-- Save Button -->
+            <div class="action-buttons">
+                <button class="btn-primary" id="saveBtn">บันทึกข้อมูล</button>
+                <button class="btn-secondary" id="resetBtn">รีเซ็ต</button>
             </div>
 
-            <div class="card" id="recordsHistory" style="display: none;">
-                <h3 class="history-title">ประวัติการบันทึก</h3>
-                <div id="recordsList"></div>
-            </div>
+            <!-- Records History -->
+            <section class="card">
+                <h2>ประวัติการบันทึก</h2>
+                <div id="recordsList" class="records-list">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </section>
         </main>
     </div>
 
