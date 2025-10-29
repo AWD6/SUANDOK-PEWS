@@ -383,6 +383,12 @@ body {
     color: #713f12;
 }
 
+.total-score.orange {
+    background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+    border-color: #fb923c;
+    color: #7c2d12;
+}
+
 .total-score.high {
     background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
     border-color: #fca5a5;
