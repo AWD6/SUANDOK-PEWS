@@ -73,7 +73,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadRecords();
     renderAgeGrid();
     renderBehaviorGrid();
-    renderVitalSignsTable();
     renderCardiovascularGrid();
     renderRespiratoryGrid();
     updateTotalScore();
@@ -82,12 +81,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event listeners
     document.getElementById('hn-input-top').addEventListener('input', (e) => {
         state.hn = e.target.value;
-        document.getElementById('hn-input').value = e.target.value;
-    });
-    
-    document.getElementById('hn-input').addEventListener('input', (e) => {
-        state.hn = e.target.value;
-        document.getElementById('hn-input-top').value = e.target.value;
     });
     
     document.getElementById('location-select').addEventListener('change', (e) => {
@@ -152,6 +145,14 @@ function selectAge(ageId) {
     document.querySelectorAll('.age-button').forEach((btn, index) => {
         btn.classList.toggle('selected', ageGroups[index].id === ageId);
     });
+    
+    // Show age-specific vital signs info
+    const ageGroup = ageGroups.find(a => a.id === ageId);
+    const infoDisplay = document.getElementById('age-info-display');
+    if (ageGroup) {
+        infoDisplay.innerHTML = `PR ปกติ : ${ageGroup.heartRate.min} - ${ageGroup.heartRate.max} ครั้ง/นาที | RR ปกติ : ${ageGroup.respiratoryRate.min} - ${ageGroup.respiratoryRate.max} ครั้ง/นาที`;
+        infoDisplay.style.display = 'block';
+    }
     
     renderCardiovascularGrid();
     renderRespiratoryGrid();
@@ -285,7 +286,7 @@ function updateTotalScore() {
     display.className = `total-score ${riskLevel}`;
     display.innerHTML = `
         <div class="total-score-header">
-            ⚠️ คะแนนรวม: <span class="total-score-number">${total}</span>
+            ⚠ คะแนนรวม: <span class="total-score-number">${total}</span>
         </div>
         <div class="total-score-recommendation">${recommendation}</div>
     `;
@@ -309,21 +310,6 @@ function getRecommendation(score) {
     if (score === 2) return 'ความเสี่ยงปานกลาง - แจ้งแพทย์และติดตามอาการทุก 1-2 ชั่วโมง';
     if (score === 3) return 'ความเสี่ยงสูง - แจ้งแพทย์ทันทีและติดตามอาการอย่างใกล้ชิด';
     return 'ความเสี่ยงวิกฤต - แจ้งแพทย์เร่งด่วนและพิจารณาส่งต่อ ICU';
-}
-
-function renderVitalSignsTable() {
-    const tbody = document.getElementById('vital-signs-table');
-    tbody.innerHTML = '';
-    
-    ageGroups.forEach(age => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td><strong>${age.name}</strong><br><small>${age.ageRange}</small></td>
-            <td>${age.heartRate.min}-${age.heartRate.max}</td>
-            <td>${age.respiratoryRate.min}-${age.respiratoryRate.max}</td>
-        `;
-        tbody.appendChild(row);
-    });
 }
 
 function saveRecord(action) {
@@ -380,13 +366,13 @@ function resetForm() {
     state.symptomsChanged = 'no';
     
     document.getElementById('hn-input-top').value = '';
-    document.getElementById('hn-input').value = '';
     document.getElementById('location-select').value = '';
     document.getElementById('location-other').value = '';
     document.getElementById('location-other').style.display = 'none';
     document.getElementById('nursing-notes').value = '';
     document.getElementById('additional-risk').checked = false;
     document.getElementById('age-error').style.display = 'none';
+    document.getElementById('age-info-display').style.display = 'none';
     
     document.querySelectorAll('.symptom-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.value === 'no');
