@@ -190,32 +190,70 @@ body {
     padding: 1.25rem;
     text-align: left;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    overflow: hidden;
+}
+
+.age-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(168, 85, 247, 0.1);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.age-button:active::before {
+    width: 300px;
+    height: 300px;
 }
 
 .age-button:hover {
     border-color: #a855f7;
     box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2);
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.02);
 }
 
 .age-button.selected {
     border-color: #a855f7;
     background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
     box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    animation: selectBounce 0.5s ease-out;
 }
 
 .age-button.selected::after {
-    content: '';
+    content: '✓';
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
-    width: 10px;
-    height: 10px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     background: #a855f7;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
     animation: pulse 2s infinite;
+}
+
+@keyframes selectBounce {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 .age-name {
@@ -270,20 +308,40 @@ body {
     padding: 1.25rem;
     text-align: left;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    overflow: hidden;
+}
+
+.score-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(59, 130, 246, 0.1);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.score-button:active::before {
+    width: 400px;
+    height: 400px;
 }
 
 .score-button:hover {
     border-color: #3b82f6;
     box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
-    transform: translateY(-4px);
+    transform: translateY(-4px) scale(1.02);
 }
 
 .score-button.selected {
     border-color: #3b82f6;
     background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
     box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    animation: selectPulse 0.5s ease-out;
 }
 
 .score-button.selected::before {
@@ -298,15 +356,39 @@ body {
 }
 
 .score-button.selected::after {
-    content: '';
+    content: '✓';
     position: absolute;
-    top: 0.5rem;
+    top: 0.35rem;
     right: 0.5rem;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: white;
-    animation: pulse 2s infinite;
+    width: 20px;
+    height: 20px;
+    color: white;
+    font-size: 0.875rem;
+    font-weight: bold;
+    animation: checkmarkPop 0.3s ease-out, pulse 2s 0.3s infinite;
+}
+
+@keyframes selectPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.03);
+    }
+}
+
+@keyframes checkmarkPop {
+    0% {
+        transform: scale(0) rotate(-45deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2) rotate(5deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
 }
 
 .score-label {
@@ -369,6 +451,7 @@ body {
     border: 2px solid;
     margin-bottom: 2rem;
     transition: all 0.3s;
+    animation: scoreSlideIn 0.5s ease-out;
 }
 
 .total-score.low {
@@ -393,6 +476,7 @@ body {
     background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
     border-color: #fca5a5;
     color: #7f1d1d;
+    animation: scoreSlideIn 0.5s ease-out, highScorePulse 2s infinite;
 }
 
 .total-score-header {
@@ -406,11 +490,53 @@ body {
 
 .total-score-number {
     font-size: 2rem;
+    animation: numberBounce 0.6s ease-out;
 }
 
 .total-score-recommendation {
     font-size: 1.125rem;
     font-weight: 600;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes scoreSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes numberBounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes highScorePulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    }
 }
 
 /* Reference Table */
@@ -479,13 +605,33 @@ body {
     font-weight: 600;
     font-size: 1.125rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.symptom-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.symptom-btn:active::before {
+    width: 300px;
+    height: 300px;
 }
 
 .symptom-btn:hover {
     border-color: #9ca3af;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.03);
 }
 
 .symptom-btn.active[data-value="yes"] {
@@ -493,6 +639,7 @@ body {
     border-color: #dc2626;
     color: white;
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    animation: symptomSelect 0.4s ease-out;
 }
 
 .symptom-btn.active[data-value="no"] {
@@ -500,6 +647,19 @@ body {
     border-color: #059669;
     color: white;
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    animation: symptomSelect 0.4s ease-out;
+}
+
+@keyframes symptomSelect {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 .action-buttons {
@@ -517,8 +677,28 @@ body {
     font-weight: 600;
     font-size: 1rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.action-btn:active::before {
+    width: 300px;
+    height: 300px;
 }
 
 .btn-dc {
@@ -528,7 +708,11 @@ body {
 .btn-dc:hover {
     background: linear-gradient(135deg, #059669 0%, #047857 100%);
     box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
-    transform: translateY(-4px);
+    transform: translateY(-4px) scale(1.05);
+}
+
+.btn-dc:active {
+    transform: translateY(-2px) scale(1.02);
 }
 
 .btn-admit {
@@ -538,7 +722,11 @@ body {
 .btn-admit:hover {
     background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
     box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-    transform: translateY(-4px);
+    transform: translateY(-4px) scale(1.05);
+}
+
+.btn-admit:active {
+    transform: translateY(-2px) scale(1.02);
 }
 
 .btn-transfer {
@@ -548,7 +736,11 @@ body {
 .btn-transfer:hover {
     background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
     box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3);
-    transform: translateY(-4px);
+    transform: translateY(-4px) scale(1.05);
+}
+
+.btn-transfer:active {
+    transform: translateY(-2px) scale(1.02);
 }
 
 .btn-reset {
@@ -560,7 +752,11 @@ body {
 .btn-reset:hover {
     border-color: #9ca3af;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.05);
+}
+
+.btn-reset:active {
+    transform: translateY(-1px) scale(1.02);
 }
 
 /* Records History */
