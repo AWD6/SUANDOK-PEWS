@@ -54,6 +54,7 @@
                     กรุณาเลือกช่วงอายุผู้ป่วยก่อนทำการบันทึก
                 </div>
                 <div class="age-grid" id="age-grid"></div>
+                <div id="age-info-display" class="age-info-display" style="display: none;"></div>
             </section>
             
             <!-- Behavior Scoring -->
@@ -101,29 +102,9 @@
             <!-- Total Score Display -->
             <div id="total-score-display" class="total-score"></div>
             
-            <!-- Vital Signs Reference Table -->
-            <div class="reference-table">
-                <h3>ตารางค่าปกติของ Vital Signs ตามช่วงอายุ</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ช่วงอายุ</th>
-                            <th>Heart Rate (ครั้ง/นาที)</th>
-                            <th>Respiratory Rate (ครั้ง/นาที)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="vital-signs-table"></tbody>
-                </table>
-            </div>
-            
             <!-- Patient Form -->
             <div class="patient-form">
                 <h3>📋 บันทึกข้อมูล</h3>
-                
-                <div class="form-section">
-                    <label for="hn-input">เลข HN ผู้ป่วย</label>
-                    <input type="text" id="hn-input" placeholder="กรอกเลข HN (ไม่บังคับ)">
-                </div>
                 
                 <div class="form-section">
                     <label for="nursing-notes">การพยาบาล</label>
@@ -140,7 +121,7 @@
                 
                 <div class="action-buttons">
                     <button class="action-btn btn-dc">✓ D/C</button>
-                    <button class="action-btn btn-admit">🏠 Admit</button>
+                    <button class="action-btn btn-admit">🛏️ Admit</button>
                     <button class="action-btn btn-transfer">→ ส่งต่อ</button>
                     <button class="action-btn btn-reset">↻ รีเซ็ต</button>
                 </div>
