@@ -312,11 +312,9 @@ function updateTotalScore() {
         <div class="total-score-recommendation">${recommendation}</div>
     `;
     
-    // Update nursing notes if empty
-    if (!state.nursingNotes.trim()) {
-        document.getElementById('nursing-notes').value = recommendation;
-        state.nursingNotes = recommendation;
-    }
+    // Update nursing notes with recommendation based on score
+    document.getElementById('nursing-notes').value = recommendation;
+    state.nursingNotes = recommendation;
 }
 
 function getRiskLevel(score) {
@@ -330,7 +328,8 @@ function getRecommendation(score) {
     if (score <= 1) return 'รับบริการตามปกติ';
     if (score === 2) return 'ติดตาม และ ประเมินอาการ ทุก 1-2 ชั่วโมง';
     if (score === 3) return 'ให้ผู้ป่วยได้รับการประเมินโดยแพทย์ ภายใน 30 นาที';
-    return 'ส่งต่อ ER';
+    if (score >= 4) return 'ส่งต่อ ER';
+    return 'รับบริการตามปกติ';
 }
 
 function saveRecord(action) {
