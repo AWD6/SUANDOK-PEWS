@@ -54,7 +54,6 @@
                     กรุณาเลือกช่วงอายุผู้ป่วยก่อนทำการบันทึก
                 </div>
                 <div class="age-grid" id="age-grid"></div>
-                <div id="age-info-display" class="age-info-display" style="display: none;"></div>
             </section>
             
             <!-- Behavior Scoring -->
@@ -67,7 +66,7 @@
             </section>
             
             <!-- Cardiovascular Scoring -->
-            <section class="scoring-section">
+            <section class="scoring-section" id="cardiovascular-section">
                 <div class="section-header">
                     <div class="badge badge-red">2</div>
                     <h2>ระบบไหลเวียนโลหิต</h2>
@@ -79,7 +78,7 @@
             </section>
             
             <!-- Respiratory Scoring -->
-            <section class="scoring-section">
+            <section class="scoring-section" id="respiratory-section">
                 <div class="section-header">
                     <div class="badge badge-purple-2">3</div>
                     <h2>ระบบทางเดินหายใจ</h2>
@@ -119,9 +118,20 @@
                     </div>
                 </div>
                 
+                <div class="form-section" id="transfer-destination-section" style="display: none;">
+                    <label for="transfer-destination">ส่งต่อไปที่</label>
+                    <input type="text" id="transfer-destination" placeholder="กรอกสถานที่ส่งต่อ...">
+                </div>
+                
                 <div class="action-buttons">
                     <button class="action-btn btn-dc">✓ D/C</button>
-                    <button class="action-btn btn-admit">🛏️ Admit</button>
+                    <button class="action-btn btn-admit">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 8px;">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                        </svg>
+                        Admit
+                    </button>
                     <button class="action-btn btn-transfer">→ ส่งต่อ</button>
                     <button class="action-btn btn-reset">↻ รีเซ็ต</button>
                 </div>
