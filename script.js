@@ -61,6 +61,8 @@ let state = {
     respiratoryScore: null,
     additionalRisk: false,
     hn: '',
+    location: '',
+    locationOther: '',
     nursingNotes: '',
     symptomsChanged: 'no',
     records: []
@@ -86,6 +88,22 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('hn-input').addEventListener('input', (e) => {
         state.hn = e.target.value;
         document.getElementById('hn-input-top').value = e.target.value;
+    });
+    
+    document.getElementById('location-select').addEventListener('change', (e) => {
+        state.location = e.target.value;
+        const otherInput = document.getElementById('location-other');
+        if (e.target.value === 'อื่นๆ') {
+            otherInput.style.display = 'block';
+        } else {
+            otherInput.style.display = 'none';
+            state.locationOther = '';
+            otherInput.value = '';
+        }
+    });
+    
+    document.getElementById('location-other').addEventListener('input', (e) => {
+        state.locationOther = e.target.value;
     });
     
     document.getElementById('nursing-notes').addEventListener('input', (e) => {
@@ -322,9 +340,14 @@ function saveRecord(action) {
     const additional = state.additionalRisk ? 2 : 0;
     const total = behavior + cardiovascular + respiratory + additional;
     
+    const locationValue = state.location === 'อื่นๆ' 
+        ? `อื่นๆ: ${state.locationOther}` 
+        : state.location;
+    
     const record = {
         id: Date.now().toString(),
         hn: state.hn.trim() || 'ไม่ระบุ',
+        location: locationValue || 'ไม่ระบุ',
         ageGroup: state.ageGroup,
         behaviorScore: behavior,
         cardiovascularScore: cardiovascular,
@@ -351,11 +374,16 @@ function resetForm() {
     state.respiratoryScore = null;
     state.additionalRisk = false;
     state.hn = '';
+    state.location = '';
+    state.locationOther = '';
     state.nursingNotes = '';
     state.symptomsChanged = 'no';
     
     document.getElementById('hn-input-top').value = '';
     document.getElementById('hn-input').value = '';
+    document.getElementById('location-select').value = '';
+    document.getElementById('location-other').value = '';
+    document.getElementById('location-other').style.display = 'none';
     document.getElementById('nursing-notes').value = '';
     document.getElementById('additional-risk').checked = false;
     document.getElementById('age-error').style.display = 'none';
@@ -410,6 +438,7 @@ function renderRecords() {
                 </div>
             </div>
             <div class="record-details">
+                <div><strong>Location:</strong> ${record.location}</div>
                 <div><strong>PEWS Score:</strong> <span style="color: #2563eb; font-weight: 600; font-size: 1rem;">${record.totalScore}</span></div>
                 <div><strong>อาการเปลี่ยนแปลง:</strong> ${record.symptomsChanged === 'yes' ? 'มี' : 'ไม่มี'}</div>
             </div>
