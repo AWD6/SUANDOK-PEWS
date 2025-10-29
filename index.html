@@ -23,6 +23,27 @@
                 <input type="text" id="hn-input-top" placeholder="กรอกเลข HN (ไม่บังคับ)">
             </div>
             
+            <!-- Location Selection -->
+            <div class="form-section">
+                <label for="location-select">Location การประเมิน</label>
+                <select id="location-select" class="location-select">
+                    <option value="">-- เลือกสถานที่ --</option>
+                    <option value="จุด Triage">จุด Triage</option>
+                    <option value="ER">ER</option>
+                    <option value="OPD 27">OPD 27</option>
+                    <option value="OPD 28">OPD 28</option>
+                    <option value="OPD 29">OPD 29</option>
+                    <option value="EID">EID</option>
+                    <option value="อื่นๆ">อื่นๆ</option>
+                </select>
+                <input 
+                    type="text" 
+                    id="location-other" 
+                    placeholder="กรุณาระบุสถานที่" 
+                    style="display: none; margin-top: 0.5rem;"
+                >
+            </div>
+            
             <!-- Age Selection -->
             <section class="scoring-section">
                 <div class="section-header">
