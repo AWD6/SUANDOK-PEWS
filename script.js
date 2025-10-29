@@ -65,6 +65,7 @@ let state = {
     locationOther: '',
     nursingNotes: '',
     symptomsChanged: 'no',
+    transferDestination: '',
     records: []
 };
 
@@ -103,6 +104,10 @@ document.addEventListener('DOMContentLoaded', function() {
         state.nursingNotes = e.target.value;
     });
     
+    document.getElementById('transfer-destination').addEventListener('input', (e) => {
+        state.transferDestination = e.target.value;
+    });
+    
     document.getElementById('additional-risk').addEventListener('change', (e) => {
         state.additionalRisk = e.target.checked;
         updateTotalScore();
@@ -118,7 +123,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.querySelector('.btn-dc').addEventListener('click', () => saveRecord('DC'));
     document.querySelector('.btn-admit').addEventListener('click', () => saveRecord('Admit'));
-    document.querySelector('.btn-transfer').addEventListener('click', () => saveRecord('Transfer'));
+    document.querySelector('.btn-transfer').addEventListener('click', () => {
+        const transferSection = document.getElementById('transfer-destination-section');
+        if (transferSection.style.display === 'none') {
+            transferSection.style.display = 'block';
+            document.getElementById('transfer-destination').focus();
+        } else {
+            saveRecord('Transfer');
+        }
+    });
     document.querySelector('.btn-reset').addEventListener('click', resetForm);
 });
 
@@ -146,12 +159,20 @@ function selectAge(ageId) {
         btn.classList.toggle('selected', ageGroups[index].id === ageId);
     });
     
-    // Show age-specific vital signs info
+    // Update vital signs info in section headers
     const ageGroup = ageGroups.find(a => a.id === ageId);
-    const infoDisplay = document.getElementById('age-info-display');
     if (ageGroup) {
-        infoDisplay.innerHTML = `PR ปกติ : ${ageGroup.heartRate.min} - ${ageGroup.heartRate.max} ครั้ง/นาที | RR ปกติ : ${ageGroup.respiratoryRate.min} - ${ageGroup.respiratoryRate.max} ครั้ง/นาที`;
-        infoDisplay.style.display = 'block';
+        // Update cardiovascular header
+        const cardioHeader = document.querySelector('#cardiovascular-section .section-header h2');
+        if (cardioHeader) {
+            cardioHeader.innerHTML = `ระบบไหลเวียนโลหิต <span style="color: #2563eb; font-weight: 600; font-size: 0.9rem; margin-left: 0.5rem;">PR ปกติ : ${ageGroup.heartRate.min} - ${ageGroup.heartRate.max} ครั้ง/นาที</span>`;
+        }
+        
+        // Update respiratory header
+        const respHeader = document.querySelector('#respiratory-section .section-header h2');
+        if (respHeader) {
+            respHeader.innerHTML = `ระบบทางเดินหายใจ <span style="color: #2563eb; font-weight: 600; font-size: 0.9rem; margin-left: 0.5rem;">RR ปกติ : ${ageGroup.respiratoryRate.min} - ${ageGroup.respiratoryRate.max} ครั้ง/นาที</span>`;
+        }
     }
     
     renderCardiovascularGrid();
@@ -300,16 +321,16 @@ function updateTotalScore() {
 
 function getRiskLevel(score) {
     if (score <= 1) return 'low';
-    if (score <= 3) return 'medium';
+    if (score === 2) return 'medium';
+    if (score === 3) return 'orange';
     return 'high';
 }
 
 function getRecommendation(score) {
-    if (score === 0) return 'ไม่มีความเสี่ยง - ดูแลตามปกติ';
-    if (score === 1) return 'ความเสี่ยงต่ำ - ติดตามอาการทุก 4-6 ชั่วโมง';
-    if (score === 2) return 'ความเสี่ยงปานกลาง - แจ้งแพทย์และติดตามอาการทุก 1-2 ชั่วโมง';
-    if (score === 3) return 'ความเสี่ยงสูง - แจ้งแพทย์ทันทีและติดตามอาการอย่างใกล้ชิด';
-    return 'ความเสี่ยงวิกฤต - แจ้งแพทย์เร่งด่วนและพิจารณาส่งต่อ ICU';
+    if (score <= 1) return 'รับบริการตามปกติ';
+    if (score === 2) return 'ติดตาม และ ประเมินอาการ ทุก 1-2 ชั่วโมง';
+    if (score === 3) return 'ให้ผู้ป่วยได้รับการประเมินโดยแพทย์ ภายใน 30 นาที';
+    return 'ส่งต่อ ER';
 }
 
 function saveRecord(action) {
@@ -343,6 +364,7 @@ function saveRecord(action) {
         nursingNotes: state.nursingNotes,
         symptomsChanged: state.symptomsChanged,
         action: action,
+        transferDestination: action === 'Transfer' ? state.transferDestination : '',
         createdAt: new Date().toISOString()
     };
     
@@ -364,15 +386,28 @@ function resetForm() {
     state.locationOther = '';
     state.nursingNotes = '';
     state.symptomsChanged = 'no';
+    state.transferDestination = '';
     
     document.getElementById('hn-input-top').value = '';
     document.getElementById('location-select').value = '';
     document.getElementById('location-other').value = '';
     document.getElementById('location-other').style.display = 'none';
     document.getElementById('nursing-notes').value = '';
+    document.getElementById('transfer-destination').value = '';
+    document.getElementById('transfer-destination-section').style.display = 'none';
     document.getElementById('additional-risk').checked = false;
     document.getElementById('age-error').style.display = 'none';
-    document.getElementById('age-info-display').style.display = 'none';
+    
+    // Reset headers to default text
+    const cardioHeader = document.querySelector('#cardiovascular-section .section-header h2');
+    if (cardioHeader) {
+        cardioHeader.innerHTML = 'ระบบไหลเวียนโลหิต';
+    }
+    
+    const respHeader = document.querySelector('#respiratory-section .section-header h2');
+    if (respHeader) {
+        respHeader.innerHTML = 'ระบบทางเดินหายใจ';
+    }
     
     document.querySelectorAll('.symptom-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.value === 'no');
@@ -427,6 +462,7 @@ function renderRecords() {
                 <div><strong>Location:</strong> ${record.location}</div>
                 <div><strong>PEWS Score:</strong> <span style="color: #2563eb; font-weight: 600; font-size: 1rem;">${record.totalScore}</span></div>
                 <div><strong>อาการเปลี่ยนแปลง:</strong> ${record.symptomsChanged === 'yes' ? 'มี' : 'ไม่มี'}</div>
+                ${record.transferDestination ? `<div><strong>ส่งต่อไปที่:</strong> ${record.transferDestination}</div>` : ''}
             </div>
             ${record.nursingNotes ? `<div class="record-notes"><strong>การพยาบาล:</strong> ${record.nursingNotes}</div>` : ''}
         `;
