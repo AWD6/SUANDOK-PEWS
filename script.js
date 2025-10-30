@@ -1,4 +1,3 @@
-
 // Age groups data
 const ageGroups = [
     {
@@ -66,6 +65,9 @@ let state = {
     nursingNotes: '',
     symptomsChanged: 'no',
     transferDestination: '',
+    transferDestinationOther: '',
+    prValue: '',
+    rrValue: '',
     records: []
 };
 
@@ -104,8 +106,21 @@ document.addEventListener('DOMContentLoaded', function() {
         state.nursingNotes = e.target.value;
     });
     
-    document.getElementById('transfer-destination').addEventListener('input', (e) => {
+    // Transfer destination dropdown handler
+    document.getElementById('transfer-destination-select').addEventListener('change', (e) => {
         state.transferDestination = e.target.value;
+        const otherInput = document.getElementById('transfer-destination-other');
+        if (e.target.value === 'อื่นๆ') {
+            otherInput.style.display = 'block';
+        } else {
+            otherInput.style.display = 'none';
+            state.transferDestinationOther = '';
+            otherInput.value = '';
+        }
+    });
+    
+    document.getElementById('transfer-destination-other').addEventListener('input', (e) => {
+        state.transferDestinationOther = e.target.value;
     });
     
     document.getElementById('additional-risk').addEventListener('change', (e) => {
@@ -127,7 +142,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const transferSection = document.getElementById('transfer-destination-section');
         if (transferSection.style.display === 'none') {
             transferSection.style.display = 'block';
-            document.getElementById('transfer-destination').focus();
         } else {
             saveRecord('Transfer');
         }
@@ -159,19 +173,49 @@ function selectAge(ageId) {
         btn.classList.toggle('selected', ageGroups[index].id === ageId);
     });
     
-    // Update vital signs info in section headers
+    // Update vital signs info in section headers and show input containers
     const ageGroup = ageGroups.find(a => a.id === ageId);
     if (ageGroup) {
-        // Update cardiovascular header
+        // Update cardiovascular header and show PR input
         const cardioHeader = document.querySelector('#cardiovascular-section .section-header h2');
         if (cardioHeader) {
             cardioHeader.innerHTML = `ระบบไหลเวียนโลหิต <span style="color: #2563eb; font-weight: 600; font-size: 0.9rem; margin-left: 0.5rem;">PR ปกติ : ${ageGroup.heartRate.min} - ${ageGroup.heartRate.max} ครั้ง/นาที</span>`;
         }
         
-        // Update respiratory header
+        // Show PR input container
+        const prContainer = document.getElementById('pr-input-container');
+        if (prContainer) {
+            prContainer.style.display = 'flex';
+        }
+        
+        // Update respiratory header and show RR input
         const respHeader = document.querySelector('#respiratory-section .section-header h2');
         if (respHeader) {
             respHeader.innerHTML = `ระบบทางเดินหายใจ <span style="color: #2563eb; font-weight: 600; font-size: 0.9rem; margin-left: 0.5rem;">RR ปกติ : ${ageGroup.respiratoryRate.min} - ${ageGroup.respiratoryRate.max} ครั้ง/นาที</span>`;
+        }
+        
+        // Show RR input container
+        const rrContainer = document.getElementById('rr-input-container');
+        if (rrContainer) {
+            rrContainer.style.display = 'flex';
+        }
+        
+        // Add event listeners to vital signs inputs
+        const prInput = document.getElementById('pr-input');
+        const rrInput = document.getElementById('rr-input');
+        
+        if (prInput && !prInput.hasAttribute('data-listener')) {
+            prInput.addEventListener('input', (e) => {
+                state.prValue = e.target.value;
+            });
+            prInput.setAttribute('data-listener', 'true');
+        }
+        
+        if (rrInput && !rrInput.hasAttribute('data-listener')) {
+            rrInput.addEventListener('input', (e) => {
+                state.rrValue = e.target.value;
+            });
+            rrInput.setAttribute('data-listener', 'true');
         }
     }
     
@@ -350,6 +394,10 @@ function saveRecord(action) {
         ? `อื่นๆ: ${state.locationOther}` 
         : state.location;
     
+    const transferValue = state.transferDestination === 'อื่นๆ'
+        ? `อื่นๆ: ${state.transferDestinationOther}`
+        : state.transferDestination;
+    
     const record = {
         id: Date.now().toString(),
         hn: state.hn.trim() || 'ไม่ระบุ',
@@ -363,7 +411,9 @@ function saveRecord(action) {
         nursingNotes: state.nursingNotes,
         symptomsChanged: state.symptomsChanged,
         action: action,
-        transferDestination: action === 'Transfer' ? state.transferDestination : '',
+        transferDestination: action === 'Transfer' ? transferValue : '',
+        prValue: state.prValue || 'ไม่ระบุ',
+        rrValue: state.rrValue || 'ไม่ระบุ',
         createdAt: new Date().toISOString()
     };
     
@@ -386,16 +436,33 @@ function resetForm() {
     state.nursingNotes = '';
     state.symptomsChanged = 'no';
     state.transferDestination = '';
+    state.transferDestinationOther = '';
+    state.prValue = '';
+    state.rrValue = '';
     
     document.getElementById('hn-input-top').value = '';
     document.getElementById('location-select').value = '';
     document.getElementById('location-other').value = '';
     document.getElementById('location-other').style.display = 'none';
     document.getElementById('nursing-notes').value = '';
-    document.getElementById('transfer-destination').value = '';
+    document.getElementById('transfer-destination-select').value = '';
+    document.getElementById('transfer-destination-other').value = '';
+    document.getElementById('transfer-destination-other').style.display = 'none';
     document.getElementById('transfer-destination-section').style.display = 'none';
     document.getElementById('additional-risk').checked = false;
     document.getElementById('age-error').style.display = 'none';
+    
+    // Reset PR and RR inputs
+    const prInput = document.getElementById('pr-input');
+    const rrInput = document.getElementById('rr-input');
+    if (prInput) prInput.value = '';
+    if (rrInput) rrInput.value = '';
+    
+    // Hide vital signs input containers
+    const prContainer = document.getElementById('pr-input-container');
+    const rrContainer = document.getElementById('rr-input-container');
+    if (prContainer) prContainer.style.display = 'none';
+    if (rrContainer) rrContainer.style.display = 'none';
     
     // Reset headers to default text
     const cardioHeader = document.querySelector('#cardiovascular-section .section-header h2');
@@ -460,6 +527,8 @@ function renderRecords() {
             <div class="record-details">
                 <div><strong>Location:</strong> ${record.location}</div>
                 <div><strong>PEWS Score:</strong> <span style="color: #2563eb; font-weight: 600; font-size: 1rem;">${record.totalScore}</span></div>
+                <div><strong>PR:</strong> ${record.prValue} ครั้ง/นาที</div>
+                <div><strong>RR:</strong> ${record.rrValue} ครั้ง/นาที</div>
                 <div><strong>อาการเปลี่ยนแปลง:</strong> ${record.symptomsChanged === 'yes' ? 'มี' : 'ไม่มี'}</div>
                 ${record.transferDestination ? `<div><strong>ส่งต่อไปที่:</strong> ${record.transferDestination}</div>` : ''}
             </div>
