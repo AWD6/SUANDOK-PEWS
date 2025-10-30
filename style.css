@@ -1,4 +1,3 @@
-
 * {
     margin: 0;
     padding: 0;
@@ -85,7 +84,8 @@ body {
     resize: vertical;
 }
 
-.form-section select {
+.form-section select,
+.transfer-select {
     width: 100%;
     font-size: 1rem;
     border: 2px solid #d1d5db;
@@ -96,10 +96,56 @@ body {
     cursor: pointer;
 }
 
-.form-section select:focus {
+.form-section select:focus,
+.transfer-select:focus {
     outline: none;
     border-color: #3b82f6;
     box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+/* Vital Signs Input Container */
+.vital-input-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 2px solid #7dd3fc;
+    border-radius: 0.75rem;
+    animation: slideDown 0.3s ease-out;
+}
+
+.vital-input-container label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0c4a6e;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.vital-input-container input[type="number"] {
+    width: 120px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: 2px solid #3b82f6;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.vital-input-container input[type="number"]:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+    transform: scale(1.05);
+}
+
+.vital-input-container .unit-text {
+    font-size: 0.875rem;
+    color: #475569;
+    font-weight: 500;
 }
 
 /* Scoring Section */
@@ -266,20 +312,6 @@ body {
 .age-range {
     font-size: 0.8rem;
     color: #6b7280;
-}
-
-/* Age Info Display */
-.age-info-display {
-    margin-top: 1.5rem;
-    padding: 1.25rem 1.5rem;
-    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
-    border: 2px solid #7dd3fc;
-    border-radius: 0.75rem;
-    font-size: 0.95rem;
-    color: #075985;
-    font-weight: 600;
-    text-align: center;
-    animation: slideDown 0.3s ease-out;
 }
 
 @keyframes slideDown {
@@ -537,44 +569,6 @@ body {
     50% {
         box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
     }
-}
-
-/* Reference Table */
-.reference-table {
-    margin-bottom: 2rem;
-}
-
-.reference-table h3 {
-    font-size: 1.125rem;
-    font-weight: bold;
-    color: #1f2937;
-    margin-bottom: 1rem;
-}
-
-.reference-table table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border: 2px solid #e5e7eb;
-    border-radius: 0.5rem;
-    overflow: hidden;
-}
-
-.reference-table th,
-.reference-table td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.reference-table th {
-    background: #f3f4f6;
-    font-weight: 600;
-    color: #1f2937;
-}
-
-.reference-table tbody tr:last-child td {
-    border-bottom: none;
 }
 
 /* Patient Form */
@@ -911,6 +905,15 @@ body {
     }
     
     .action-btn {
+        width: 100%;
+    }
+    
+    .vital-input-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .vital-input-container input[type="number"] {
         width: 100%;
     }
 }
