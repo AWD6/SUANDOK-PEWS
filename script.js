@@ -136,8 +136,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    document.querySelector('.btn-dc').addEventListener('click', () => saveRecord('DC'));
-    document.querySelector('.btn-admit').addEventListener('click', () => saveRecord('Admit'));
     document.querySelector('.btn-transfer').addEventListener('click', () => {
         const transferSection = document.getElementById('transfer-destination-section');
         if (transferSection.style.display === 'none') {
