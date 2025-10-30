@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -74,6 +73,11 @@
                 <div id="cardiovascular-warning" class="warning-message" style="display: none;">
                     กรุณาเลือกช่วงอายุเพื่อดูเกณฑ์การประเมินที่เหมาะสม
                 </div>
+                <div id="pr-input-container" class="vital-input-container" style="display: none;">
+                    <label for="pr-input">กรอก PR (ชีพจร):</label>
+                    <input type="number" id="pr-input" placeholder="ครั้ง/นาที" min="0" max="300">
+                    <span class="unit-text">ครั้ง/นาที</span>
+                </div>
                 <div class="score-grid" id="cardiovascular-grid"></div>
             </section>
             
@@ -85,6 +89,11 @@
                 </div>
                 <div id="respiratory-warning" class="warning-message" style="display: none;">
                     กรุณาเลือกช่วงอายุเพื่อดูเกณฑ์การประเมินที่เหมาะสม
+                </div>
+                <div id="rr-input-container" class="vital-input-container" style="display: none;">
+                    <label for="rr-input">กรอก RR (อัตราการหายใจ):</label>
+                    <input type="number" id="rr-input" placeholder="ครั้ง/นาที" min="0" max="200">
+                    <span class="unit-text">ครั้ง/นาที</span>
                 </div>
                 <div class="score-grid" id="respiratory-grid"></div>
             </section>
@@ -119,8 +128,23 @@
                 </div>
                 
                 <div class="form-section" id="transfer-destination-section" style="display: none;">
-                    <label for="transfer-destination">ส่งต่อไปที่</label>
-                    <input type="text" id="transfer-destination" placeholder="กรอกสถานที่ส่งต่อ...">
+                    <label for="transfer-destination-select">ส่งต่อไปที่</label>
+                    <select id="transfer-destination-select" class="transfer-select">
+                        <option value="">-- เลือกสถานที่ส่งต่อ --</option>
+                        <option value="จุด Triage">จุด Triage</option>
+                        <option value="ER">ER</option>
+                        <option value="OPD 27">OPD 27</option>
+                        <option value="OPD 28">OPD 28</option>
+                        <option value="OPD 29">OPD 29</option>
+                        <option value="EID">EID</option>
+                        <option value="อื่นๆ">อื่นๆ</option>
+                    </select>
+                    <input 
+                        type="text" 
+                        id="transfer-destination-other" 
+                        placeholder="กรุณาระบุสถานที่ส่งต่อ" 
+                        style="display: none; margin-top: 0.5rem;"
+                    >
                 </div>
                 
                 <div class="action-buttons">
