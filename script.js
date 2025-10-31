@@ -308,8 +308,8 @@ function renderRespiratoryGrid() {
     
     const options = [
         { score: 0, label: "อยู่ในช่วงค่าปกติ/ไม่มี retraction" },
-        { score: 1, label: `หายใจ ≥${max + 10} ครั้ง/นาที หรือ ใช้กล้ามเนื้อช่วย หรือ FiO₂ ≥30% หรือ O₂ ≥4 LPM` },
-        { score: 2, label: `หายใจ ≥${max + 20} ครั้ง/นาที และมี retractions หรือ FiO₂ ≥40% หรือ O₂ ≥6 LPM` },
+        { score: 1, label: `หายใจ ≥${max + 10} ครั้ง/นาที หรือ มี retraction หรือ FiO₂ ≥30% หรือ O₂ ≥4 LPM` },
+        { score: 2, label: `หายใจ ≥${max + 20} ครั้ง/นาที และมี retraction หรือ FiO₂ ≥40% หรือ O₂ ≥6 LPM` },
         { score: 3, label: `หายใจ ≤${min - 5} ครั้ง/นาที + retraction + grunting หรือ FiO₂ ≥50% หรือ O₂ ≥8 LPM` }
     ];
     
