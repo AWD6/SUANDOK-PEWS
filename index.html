@@ -141,7 +141,13 @@
                 <div id="total-score-display" class="total-score"></div>
 
                 <div class="vital-signs-section">
-                    <h3>📊 สัญญาณชีพ (Vital Signs)</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3>📊 สัญญาณชีพ (Vital Signs)</h3>
+                        <button id="chd-btn" class="chd-button" type="button">
+                            💙 Congenital heart disease
+                        </button>
+                    </div>
+                    <div id="chd-selected" class="chd-selected" style="display: none;"></div>
                     <div class="vital-signs-grid">
                         <div class="vital-input-group">
                             <label for="temp-input">Temp (°C)</label>
@@ -261,6 +267,29 @@
                     <div id="records-list"></div>
                 </div>
             </main>
+        </div>
+
+        <!-- CHD Modal -->
+        <div id="chd-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2> Congenital Heart Disease</h2>
+                    <button class="modal-close" id="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p style="margin-bottom: 1.5rem; color: #6b7280;">เลือกประเภท CHD:</p>
+                    <div class="chd-options">
+                        <button class="chd-option-btn" data-chd="acyanotic">
+                            <span class="chd-icon"></span>
+                            <span class="chd-text">Acyanotic CHD</span>
+                        </button>
+                        <button class="chd-option-btn" data-chd="cyanotic">
+                            <span class="chd-icon"></span>
+                            <span class="chd-text">Cyanotic CHD</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <script src="script.js"></script>
