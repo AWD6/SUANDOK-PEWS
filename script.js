@@ -75,6 +75,7 @@ let state = {
     spo2: '',
     parentRecordId: null,
     isReassessment: false,
+    chdType: '',
     records: []
 };
 
@@ -173,7 +174,51 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     document.querySelector('.btn-reset').addEventListener('click', resetForm);
+
+    // CHD Modal handlers
+    document.getElementById('chd-btn').addEventListener('click', () => {
+        document.getElementById('chd-modal').style.display = 'flex';
+    });
+
+    document.getElementById('modal-close').addEventListener('click', () => {
+        document.getElementById('chd-modal').style.display = 'none';
+    });
+
+    document.querySelectorAll('.chd-option-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const chdType = this.dataset.chd;
+            state.chdType = chdType;
+            
+            const chdSelected = document.getElementById('chd-selected');
+            const displayText = chdType === 'acyanotic' ? 'Acyanotic CHD' : 'Cyanotic CHD';
+            const icon = chdType === 'acyanotic' ? '💙' : '💜';
+            
+            chdSelected.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span>${icon}</span>
+                    <span style="font-weight: 600;">${displayText}</span>
+                    <button onclick="clearCHD()" style="margin-left: auto; padding: 0.25rem 0.5rem; background: #ef4444; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">ยกเลิก</button>
+                </div>
+            `;
+            chdSelected.style.display = 'block';
+            
+            document.getElementById('chd-modal').style.display = 'none';
+        });
+    });
+
+    // Close modal on outside click
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('chd-modal');
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
 });
+
+function clearCHD() {
+    state.chdType = '';
+    document.getElementById('chd-selected').style.display = 'none';
+}
 
 function renderAgeGrid() {
     const grid = document.getElementById('age-grid');
@@ -445,6 +490,7 @@ function saveRecord(action) {
         rrVitalSign: state.rrVitalSign || 'ไม่ระบุ',
         bloodPressure: state.bloodPressure || 'ไม่ระบุ',
         spo2: state.spo2 || 'ไม่ระบุ',
+        chdType: state.chdType || '',
         parentRecordId: state.parentRecordId,
         isReassessment: state.isReassessment,
         createdAt: new Date().toISOString()
@@ -608,6 +654,12 @@ function renderRecords() {
                         <span class="transfer-badge">${record.transferDestination}</span>
                     </div>
                     ` : ''}
+                    ${record.chdType ? `
+                    <div class="detail-row">
+                        <span class="detail-label">CHD:</span>
+                        <span class="chd-badge">${record.chdType === 'acyanotic' ? ' Acyanotic CHD' : ' Cyanotic CHD'}</span>
+                    </div>
+                    ` : ''}
                 </div>
 
                 ${comparisonHTML}
@@ -681,6 +733,7 @@ function resetForm() {
     state.rrVitalSign = '';
     state.bloodPressure = '';
     state.spo2 = '';
+    state.chdType = '';
     state.parentRecordId = null;
     state.isReassessment = false;
 
@@ -714,6 +767,9 @@ function resetForm() {
     document.getElementById('rr-vs-input').value = '';
     document.getElementById('bp-input').value = '';
     document.getElementById('spo2-input').value = '';
+
+    // Hide CHD selected
+    document.getElementById('chd-selected').style.display = 'none';
 
     // Hide vital signs input containers
     const prContainer = document.getElementById('pr-input-container');
