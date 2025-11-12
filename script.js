@@ -511,7 +511,7 @@ function renderRecords() {
                                     <span class="data-value">${parentRecord.temperature} °C</span>
                                 </div>
                                 <div class="data-item">
-                                    <span class="data-label">Pulse</span>
+                                    <span class="data-label">PR</span>
                                     <span class="data-value">${parentRecord.pulse} bpm</span>
                                 </div>
                                 <div class="data-item">
@@ -528,9 +528,9 @@ function renderRecords() {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="comparison-arrow">→</div>
-                        
+
                         <div class="comparison-column highlight">
                             <div class="comparison-header">
                                 <span class="comparison-badge">2</span>
@@ -549,7 +549,7 @@ function renderRecords() {
                                     <span class="data-value">${record.temperature} °C</span>
                                 </div>
                                 <div class="data-item ${record.pulse !== parentRecord.pulse ? 'changed' : ''}">
-                                    <span class="data-label">Pulse</span>
+                                    <span class="data-label">PR</span>
                                     <span class="data-value">${record.pulse} bpm</span>
                                 </div>
                                 <div class="data-item ${record.rrVitalSign !== parentRecord.rrVitalSign ? 'changed' : ''}">
@@ -570,6 +570,10 @@ function renderRecords() {
                 </div>
             `;
         }
+        const riskLevel = getRiskLevel(record.totalScore);
+        const scoreColorClass = riskLevel === 'low' ? 'score-green' : 
+                                riskLevel === 'medium' ? 'score-yellow' : 
+                                riskLevel === 'orange' ? 'score-orange' : 'score-red';
 
         return `
             <div class="record-card">
@@ -592,7 +596,7 @@ function renderRecords() {
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">คะแนนรวม:</span>
-                        <span class="total-score-badge">${record.totalScore}</span>
+                        <span class="total-score-badge ${scoreColorClass}">${record.totalScore}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">การดำเนินการ:</span>
@@ -602,13 +606,16 @@ function renderRecords() {
 
                 ${comparisonHTML}
 
-                ${!isReassessment ? `
-                    <div style="margin-top: 1rem;">
+                <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                    ${!isReassessment ? `
                         <button class="reassess-btn" onclick="startReassessment('${record.id}')">
                             🔄 ประเมินซ้ำ
                         </button>
-                    </div>
-                ` : ''}
+                    ` : ''}
+                    <button class="delete-btn" onclick="deleteRecord('${record.id}')">
+                        🗑️ ลบ
+                    </button>
+                </div>
             </div>
         `;
     }).join('');
@@ -727,152 +734,6 @@ function resetForm() {
     document.querySelectorAll('.score-button').forEach(btn => btn.classList.remove('selected'));
 
     updateTotalScore();
-}
-
-function renderRecords() {
-    const container = document.getElementById('records-list');
-    if (!state.records || state.records.length === 0) {
-        container.innerHTML = `
-            <div class="empty-records">
-                <div class="empty-icon">📋</div>
-                <p class="empty-title">ยังไม่มีประวัติการบันทึก</p>
-                <p class="empty-description">เมื่อคุณบันทึกข้อมูลผู้ป่วย ประวัติจะแสดงที่นี่</p>
-            </div>
-        `;
-        return;
-    }
-
-    container.innerHTML = state.records.map((record, index) => {
-        const ageGroup = ageGroups.find(a => a.id === record.ageGroup);
-        const ageText = ageGroup ? `${ageGroup.name} (${ageGroup.ageRange})` : 'ไม่ระบุ';
-        const isReassessment = record.isReassessment;
-        const parentRecord = isReassessment ? state.records.find(r => r.id === record.parentRecordId) : null;
-
-        let comparisonHTML = '';
-        if (isReassessment && parentRecord) {
-            comparisonHTML = `
-                <div class="comparison-container">
-                    <h4>📊 เปรียบเทียบผลการประเมิน</h4>
-                    <div class="comparison-grid">
-                        <div class="comparison-column">
-                            <div class="comparison-header">
-                                <span class="comparison-badge">1</span>
-                                <div>
-                                    <div class="comparison-title">ครั้งที่ 1</div>
-                                    <div class="comparison-time">${formatDateTime(parentRecord.createdAt)}</div>
-                                </div>
-                            </div>
-                            <div class="comparison-data">
-                                <div class="data-item">
-                                    <span class="data-label">คะแนนรวม</span>
-                                    <span class="data-value score-value">${parentRecord.totalScore}</span>
-                                </div>
-                                <div class="data-item">
-                                    <span class="data-label">Temp</span>
-                                    <span class="data-value">${parentRecord.temperature} °C</span>
-                                </div>
-                                <div class="data-item">
-                                    <span class="data-label">PR</span>
-                                    <span class="data-value">${parentRecord.pulse} bpm</span>
-                                </div>
-                                <div class="data-item">
-                                    <span class="data-label">RR</span>
-                                    <span class="data-value">${parentRecord.rrVitalSign} tpm</span>
-                                </div>
-                                <div class="data-item">
-                                    <span class="data-label">BP</span>
-                                    <span class="data-value">${parentRecord.bloodPressure}</span>
-                                </div>
-                                <div class="data-item">
-                                    <span class="data-label">SpO₂</span>
-                                    <span class="data-value">${parentRecord.spo2}%</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="comparison-arrow">→</div>
-                        
-                        <div class="comparison-column highlight">
-                            <div class="comparison-header">
-                                <span class="comparison-badge">2</span>
-                                <div>
-                                    <div class="comparison-title">ครั้งที่ 2 (ประเมินซ้ำ)</div>
-                                    <div class="comparison-time">${formatDateTime(record.createdAt)}</div>
-                                </div>
-                            </div>
-                            <div class="comparison-data">
-                                <div class="data-item ${record.totalScore !== parentRecord.totalScore ? 'changed' : ''}">
-                                    <span class="data-label">คะแนนรวม</span>
-                                    <span class="data-value score-value">${record.totalScore}</span>
-                                </div>
-                                <div class="data-item ${record.temperature !== parentRecord.temperature ? 'changed' : ''}">
-                                    <span class="data-label">Temp</span>
-                                    <span class="data-value">${record.temperature} °C</span>
-                                </div>
-                                <div class="data-item ${record.pulse !== parentRecord.pulse ? 'changed' : ''}">
-                                    <span class="data-label">PR</span>
-                                    <span class="data-value">${record.pulse} bpm</span>
-                                </div>
-                                <div class="data-item ${record.rrVitalSign !== parentRecord.rrVitalSign ? 'changed' : ''}">
-                                    <span class="data-label">RR</span>
-                                    <span class="data-value">${record.rrVitalSign} tpm</span>
-                                </div>
-                                <div class="data-item ${record.bloodPressure !== parentRecord.bloodPressure ? 'changed' : ''}">
-                                    <span class="data-label">BP</span>
-                                    <span class="data-value">${record.bloodPressure}</span>
-                                </div>
-                                <div class="data-item ${record.spo2 !== parentRecord.spo2 ? 'changed' : ''}">
-                                    <span class="data-label">SpO₂</span>
-                                    <span class="data-value">${record.spo2}%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        return `
-            <div class="record-card">
-                <div class="record-header">
-                    <div>
-                        <strong>HN:</strong> ${record.hn}
-                        ${isReassessment ? '<span class="reassessment-badge">ประเมินซ้ำ</span>' : ''}
-                    </div>
-                    <div class="record-date">${formatDateTime(record.createdAt)}</div>
-                </div>
-
-                <div class="record-details">
-                    <div class="detail-row">
-                        <span class="detail-label">สถานที่:</span>
-                        <span>${record.location}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">ช่วงอายุ:</span>
-                        <span>${ageText}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">คะแนนรวม:</span>
-                        <span class="total-score-badge">${record.totalScore}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">การดำเนินการ:</span>
-                        <span class="action-badge">${record.action}</span>
-                    </div>
-                </div>
-
-                ${comparisonHTML}
-
-                ${!isReassessment ? `
-                    <div style="margin-top: 1rem;">
-                        <button class="reassess-btn" onclick="startReassessment('${record.id}')">
-                            🔄 ประเมินซ้ำ
-                        </button>
-                    </div>
-                ` : ''}
-            </div>
-        `;
-    }).join('');
 }
 
 function deleteRecord(id) {
