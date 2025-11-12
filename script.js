@@ -602,6 +602,12 @@ function renderRecords() {
                         <span class="detail-label">การดำเนินการ:</span>
                         <span class="action-badge">${record.action}</span>
                     </div>
+                    ${record.action === 'Transfer' && record.transferDestination ? `
+                    <div class="detail-row">
+                        <span class="detail-label">ส่งต่อไปที่:</span>
+                        <span class="transfer-badge">${record.transferDestination}</span>
+                    </div>
+                    ` : ''}
                 </div>
 
                 ${comparisonHTML}
