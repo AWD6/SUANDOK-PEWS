@@ -68,6 +68,13 @@ let state = {
     transferDestinationOther: '',
     prValue: '',
     rrValue: '',
+    temperature: '',
+    pulse: '',
+    rrVitalSign: '',
+    bloodPressure: '',
+    spo2: '',
+    parentRecordId: null,
+    isReassessment: false,
     records: []
 };
 
@@ -121,6 +128,27 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.getElementById('transfer-destination-other').addEventListener('input', (e) => {
         state.transferDestinationOther = e.target.value;
+    });
+    
+    // Vital signs event listeners
+    document.getElementById('temp-input').addEventListener('input', (e) => {
+        state.temperature = e.target.value;
+    });
+    
+    document.getElementById('pulse-input').addEventListener('input', (e) => {
+        state.pulse = e.target.value;
+    });
+    
+    document.getElementById('rr-vs-input').addEventListener('input', (e) => {
+        state.rrVitalSign = e.target.value;
+    });
+    
+    document.getElementById('bp-input').addEventListener('input', (e) => {
+        state.bloodPressure = e.target.value;
+    });
+    
+    document.getElementById('spo2-input').addEventListener('input', (e) => {
+        state.spo2 = e.target.value;
     });
     
     document.getElementById('additional-risk').addEventListener('change', (e) => {
@@ -412,6 +440,13 @@ function saveRecord(action) {
         transferDestination: action === 'Transfer' ? transferValue : '',
         prValue: state.prValue || 'ไม่ระบุ',
         rrValue: state.rrValue || 'ไม่ระบุ',
+        temperature: state.temperature || 'ไม่ระบุ',
+        pulse: state.pulse || 'ไม่ระบุ',
+        rrVitalSign: state.rrVitalSign || 'ไม่ระบุ',
+        bloodPressure: state.bloodPressure || 'ไม่ระบุ',
+        spo2: state.spo2 || 'ไม่ระบุ',
+        parentRecordId: state.parentRecordId,
+        isReassessment: state.isReassessment,
         createdAt: new Date().toISOString()
     };
     
@@ -437,6 +472,13 @@ function resetForm() {
     state.transferDestinationOther = '';
     state.prValue = '';
     state.rrValue = '';
+    state.temperature = '';
+    state.pulse = '';
+    state.rrVitalSign = '';
+    state.bloodPressure = '';
+    state.spo2 = '';
+    state.parentRecordId = null;
+    state.isReassessment = false;
     
     document.getElementById('hn-input-top').value = '';
     document.getElementById('location-select').value = '';
@@ -455,6 +497,13 @@ function resetForm() {
     const rrInput = document.getElementById('rr-input');
     if (prInput) prInput.value = '';
     if (rrInput) rrInput.value = '';
+    
+    // Reset vital signs inputs
+    document.getElementById('temp-input').value = '';
+    document.getElementById('pulse-input').value = '';
+    document.getElementById('rr-vs-input').value = '';
+    document.getElementById('bp-input').value = '';
+    document.getElementById('spo2-input').value = '';
     
     // Hide vital signs input containers
     const prContainer = document.getElementById('pr-input-container');
