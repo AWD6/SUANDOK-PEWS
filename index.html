@@ -13,7 +13,7 @@
             <h1>SUANDOK PEWS</h1>
             <p>Pediatric Early Warning Signs</p>
         </header>
-        
+
         <!-- Main Card -->
         <main class="main-card">
             <!-- Patient HN Input -->
@@ -21,7 +21,7 @@
                 <label for="hn-input-top">เลข HN ผู้ป่วย</label>
                 <input type="text" id="hn-input-top" placeholder="กรอกเลข HN (ไม่บังคับ)">
             </div>
-            
+
             <!-- Location Selection -->
             <div class="form-section">
                 <label for="location-select">Location การประเมิน</label>
@@ -42,7 +42,7 @@
                     style="display: none; margin-top: 0.5rem;"
                 >
             </div>
-            
+
             <!-- Age Selection -->
             <section class="scoring-section">
                 <div class="section-header">
@@ -54,7 +54,7 @@
                 </div>
                 <div class="age-grid" id="age-grid"></div>
             </section>
-            
+
             <!-- Behavior Scoring -->
             <section class="scoring-section">
                 <div class="section-header">
@@ -63,7 +63,7 @@
                 </div>
                 <div class="score-grid" id="behavior-grid"></div>
             </section>
-            
+
             <!-- Cardiovascular Scoring -->
             <section class="scoring-section" id="cardiovascular-section">
                 <div class="section-header">
@@ -80,7 +80,7 @@
                 </div>
                 <div class="score-grid" id="cardiovascular-grid"></div>
             </section>
-            
+
             <!-- Respiratory Scoring -->
             <section class="scoring-section" id="respiratory-section">
                 <div class="section-header">
@@ -97,7 +97,7 @@
                 </div>
                 <div class="score-grid" id="respiratory-grid"></div>
             </section>
-            
+
             <!-- Additional Risk -->
             <section class="scoring-section">
                 <label class="checkbox-label">
@@ -106,10 +106,10 @@
                     <span class="score-badge">+2</span>
                 </label>
             </section>
-            
+
             <!-- Total Score Display -->
             <div id="total-score-display" class="total-score"></div>
-            
+
             <!-- Vital Signs Section -->
             <div class="vital-signs-section">
                 <h3>📊 สัญญาณชีพ (Vital Signs)</h3>
@@ -136,16 +136,16 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Patient Form -->
             <div class="patient-form">
                 <h3>📋 บันทึกข้อมูล</h3>
-                
+
                 <div class="form-section">
                     <label for="nursing-notes">การพยาบาล</label>
                     <textarea id="nursing-notes" rows="3" placeholder="บันทึกการพยาบาล..."></textarea>
                 </div>
-                
+
                 <div class="form-section">
                     <label>อาการเปลี่ยนแปลงขณะรอตรวจ</label>
                     <div class="symptoms-buttons">
@@ -153,7 +153,7 @@
                         <button class="symptom-btn active" data-value="no">ไม่มี</button>
                     </div>
                 </div>
-                
+
                 <div class="form-section" id="transfer-destination-section" style="display: none;">
                     <label for="transfer-destination-select">ส่งต่อไปที่</label>
                     <select id="transfer-destination-select" class="transfer-select">
@@ -173,13 +173,13 @@
                         style="display: none; margin-top: 0.5rem;"
                     >
                 </div>
-                
+
                 <div class="action-buttons">
                     <button class="action-btn btn-transfer">→ ส่งต่อ</button>
                     <button class="action-btn btn-reset">↻ รีเซ็ต</button>
                 </div>
             </div>
-            
+
             <!-- Records History -->
             <div class="records-history">
                 <h3>ประวัติการบันทึก</h3>
@@ -187,7 +187,7 @@
             </div>
         </main>
     </div>
-    
+
     <script src="script.js"></script>
 </body>
 </html>
