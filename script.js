@@ -87,12 +87,12 @@ document.addEventListener('DOMContentLoaded', function() {
     renderRespiratoryGrid();
     updateTotalScore();
     renderRecords();
-    
+
     // Event listeners
     document.getElementById('hn-input-top').addEventListener('input', (e) => {
         state.hn = e.target.value;
     });
-    
+
     document.getElementById('location-select').addEventListener('change', (e) => {
         state.location = e.target.value;
         const otherInput = document.getElementById('location-other');
@@ -104,15 +104,15 @@ document.addEventListener('DOMContentLoaded', function() {
             otherInput.value = '';
         }
     });
-    
+
     document.getElementById('location-other').addEventListener('input', (e) => {
         state.locationOther = e.target.value;
     });
-    
+
     document.getElementById('nursing-notes').addEventListener('input', (e) => {
         state.nursingNotes = e.target.value;
     });
-    
+
     // Transfer destination dropdown handler
     document.getElementById('transfer-destination-select').addEventListener('change', (e) => {
         state.transferDestination = e.target.value;
@@ -125,37 +125,37 @@ document.addEventListener('DOMContentLoaded', function() {
             otherInput.value = '';
         }
     });
-    
+
     document.getElementById('transfer-destination-other').addEventListener('input', (e) => {
         state.transferDestinationOther = e.target.value;
     });
-    
+
     // Vital signs event listeners
     document.getElementById('temp-input').addEventListener('input', (e) => {
         state.temperature = e.target.value;
     });
-    
+
     document.getElementById('pulse-input').addEventListener('input', (e) => {
         state.pulse = e.target.value;
     });
-    
+
     document.getElementById('rr-vs-input').addEventListener('input', (e) => {
         state.rrVitalSign = e.target.value;
     });
-    
+
     document.getElementById('bp-input').addEventListener('input', (e) => {
         state.bloodPressure = e.target.value;
     });
-    
+
     document.getElementById('spo2-input').addEventListener('input', (e) => {
         state.spo2 = e.target.value;
     });
-    
+
     document.getElementById('additional-risk').addEventListener('change', (e) => {
         state.additionalRisk = e.target.checked;
         updateTotalScore();
     });
-    
+
     document.querySelectorAll('.symptom-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             document.querySelectorAll('.symptom-btn').forEach(b => b.classList.remove('active'));
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
             state.symptomsChanged = this.dataset.value;
         });
     });
-    
+
     document.querySelector('.btn-transfer').addEventListener('click', () => {
         const transferSection = document.getElementById('transfer-destination-section');
         if (transferSection.style.display === 'none') {
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function renderAgeGrid() {
     const grid = document.getElementById('age-grid');
     grid.innerHTML = '';
-    
+
     ageGroups.forEach(age => {
         const button = document.createElement('button');
         button.className = 'age-button';
@@ -194,11 +194,11 @@ function renderAgeGrid() {
 function selectAge(ageId) {
     state.ageGroup = ageId;
     document.getElementById('age-error').style.display = 'none';
-    
+
     document.querySelectorAll('.age-button').forEach((btn, index) => {
         btn.classList.toggle('selected', ageGroups[index].id === ageId);
     });
-    
+
     // Update vital signs info in section headers and show input containers
     const ageGroup = ageGroups.find(a => a.id === ageId);
     if (ageGroup) {
@@ -207,36 +207,36 @@ function selectAge(ageId) {
         if (cardioHeader) {
             cardioHeader.innerHTML = `ระบบไหลเวียนโลหิต <span style="color: #2563eb; font-weight: 600; font-size: 0.9rem; margin-left: 0.5rem;">PR ปกติ : ${ageGroup.heartRate.min} - ${ageGroup.heartRate.max} ครั้ง/นาที</span>`;
         }
-        
+
         // Show PR input container
         const prContainer = document.getElementById('pr-input-container');
         if (prContainer) {
             prContainer.style.display = 'flex';
         }
-        
+
         // Update respiratory header and show RR input
         const respHeader = document.querySelector('#respiratory-section .section-header h2');
         if (respHeader) {
             respHeader.innerHTML = `ระบบทางเดินหายใจ <span style="color: #2563eb; font-weight: 600; font-size: 0.9rem; margin-left: 0.5rem;">RR ปกติ : ${ageGroup.respiratoryRate.min} - ${ageGroup.respiratoryRate.max} ครั้ง/นาที</span>`;
         }
-        
+
         // Show RR input container
         const rrContainer = document.getElementById('rr-input-container');
         if (rrContainer) {
             rrContainer.style.display = 'flex';
         }
-        
+
         // Add event listeners to vital signs inputs
         const prInput = document.getElementById('pr-input');
         const rrInput = document.getElementById('rr-input');
-        
+
         if (prInput && !prInput.hasAttribute('data-listener')) {
             prInput.addEventListener('input', (e) => {
                 state.prValue = e.target.value;
             });
             prInput.setAttribute('data-listener', 'true');
         }
-        
+
         if (rrInput && !rrInput.hasAttribute('data-listener')) {
             rrInput.addEventListener('input', (e) => {
                 state.rrValue = e.target.value;
@@ -244,7 +244,7 @@ function selectAge(ageId) {
             rrInput.setAttribute('data-listener', 'true');
         }
     }
-    
+
     renderCardiovascularGrid();
     renderRespiratoryGrid();
 }
@@ -252,7 +252,7 @@ function selectAge(ageId) {
 function renderBehaviorGrid() {
     const grid = document.getElementById('behavior-grid');
     grid.innerHTML = '';
-    
+
     behaviorOptions.forEach(option => {
         const button = document.createElement('button');
         button.className = 'score-button';
@@ -276,26 +276,26 @@ function selectBehavior(score) {
 function renderCardiovascularGrid() {
     const grid = document.getElementById('cardiovascular-grid');
     const warning = document.getElementById('cardiovascular-warning');
-    
+
     if (!state.ageGroup) {
         warning.style.display = 'block';
         grid.innerHTML = '';
         return;
     }
-    
+
     warning.style.display = 'none';
-    
+
     const ageDetails = ageGroups.find(a => a.id === state.ageGroup);
     const max = ageDetails.heartRate.max;
     const min = ageDetails.heartRate.min;
-    
+
     const options = [
         { score: 0, label: "ผิวสีชมพูดี หรือ CRT 1-2 วินาที" },
         { score: 1, label: "ผิวสีซีด หรือ CRT 3 วินาที" },
         { score: 2, label: `ผิวสีเทา หรือ CRT 4 วินาที หรือ ชีพจร ≥${max + 20} ครั้ง/นาที` },
         { score: 3, label: `ผิวสีเทาและตัวลาย หรือ CRT ≥5 วินาที หรือ ชีพจร ≥${max + 30} ครั้ง/นาที หรือ ชีพจร ≤${min - 10} ครั้ง/นาที` }
     ];
-    
+
     grid.innerHTML = '';
     options.forEach(option => {
         const button = document.createElement('button');
@@ -321,26 +321,26 @@ function selectCardiovascular(score) {
 function renderRespiratoryGrid() {
     const grid = document.getElementById('respiratory-grid');
     const warning = document.getElementById('respiratory-warning');
-    
+
     if (!state.ageGroup) {
         warning.style.display = 'block';
         grid.innerHTML = '';
         return;
     }
-    
+
     warning.style.display = 'none';
-    
+
     const ageDetails = ageGroups.find(a => a.id === state.ageGroup);
     const max = ageDetails.respiratoryRate.max;
     const min = ageDetails.respiratoryRate.min;
-    
+
     const options = [
         { score: 0, label: "อยู่ในช่วงค่าปกติ/ไม่มี retraction" },
         { score: 1, label: `หายใจ ≥${max + 10} ครั้ง/นาที หรือ มี retraction หรือ FiO₂ ≥30% หรือ O₂ ≥4 LPM` },
         { score: 2, label: `หายใจ ≥${max + 20} ครั้ง/นาที และมี retraction หรือ FiO₂ ≥40% หรือ O₂ ≥6 LPM` },
         { score: 3, label: `หายใจ ≤${min - 5} ครั้ง/นาที + retraction + grunting หรือ FiO₂ ≥50% หรือ O₂ ≥8 LPM` }
     ];
-    
+
     grid.innerHTML = '';
     options.forEach(option => {
         const button = document.createElement('button');
@@ -369,11 +369,11 @@ function updateTotalScore() {
     const respiratory = state.respiratoryScore || 0;
     const additional = state.additionalRisk ? 2 : 0;
     const total = behavior + cardiovascular + respiratory + additional;
-    
+
     const display = document.getElementById('total-score-display');
     const recommendation = getRecommendation(total);
     const riskLevel = getRiskLevel(total);
-    
+
     display.className = `total-score ${riskLevel}`;
     display.innerHTML = `
         <div class="total-score-header">
@@ -381,7 +381,7 @@ function updateTotalScore() {
         </div>
         <div class="total-score-recommendation">${recommendation}</div>
     `;
-    
+
     // Update nursing notes with recommendation based on score
     document.getElementById('nursing-notes').value = recommendation;
     state.nursingNotes = recommendation;
@@ -409,21 +409,21 @@ function saveRecord(action) {
         alert('กรุณาเลือกช่วงอายุผู้ป่วยก่อนทำการบันทึก');
         return;
     }
-    
+
     const behavior = state.behaviorScore || 0;
     const cardiovascular = state.cardiovascularScore || 0;
     const respiratory = state.respiratoryScore || 0;
     const additional = state.additionalRisk ? 2 : 0;
     const total = behavior + cardiovascular + respiratory + additional;
-    
+
     const locationValue = state.location === 'อื่นๆ' 
         ? `อื่นๆ: ${state.locationOther}` 
         : state.location;
-    
+
     const transferValue = state.transferDestination === 'อื่นๆ'
         ? `อื่นๆ: ${state.transferDestinationOther}`
         : state.transferDestination;
-    
+
     const record = {
         id: Date.now().toString(),
         hn: state.hn.trim() || 'ไม่ระบุ',
@@ -449,7 +449,7 @@ function saveRecord(action) {
         isReassessment: state.isReassessment,
         createdAt: new Date().toISOString()
     };
-    
+
     state.records.unshift(record);
     saveRecords();
     renderRecords();
@@ -474,13 +474,13 @@ function renderRecords() {
         container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 2rem;">ยังไม่มีประวัติการบันทึก</p>';
         return;
     }
-    
+
     container.innerHTML = state.records.map((record, index) => {
         const ageGroup = ageGroups.find(a => a.id === record.ageGroup);
         const ageText = ageGroup ? `${ageGroup.name} (${ageGroup.ageRange})` : 'ไม่ระบุ';
         const isReassessment = record.isReassessment;
         const parentRecord = isReassessment ? state.records.find(r => r.id === record.parentRecordId) : null;
-        
+
         let comparisonHTML = '';
         if (isReassessment && parentRecord) {
             comparisonHTML = `
@@ -550,7 +550,7 @@ function renderRecords() {
                 </div>
             `;
         }
-        
+
         return `
             <div class="record-card">
                 <div class="record-header">
@@ -560,7 +560,7 @@ function renderRecords() {
                     </div>
                     <div class="record-date">${formatDateTime(record.createdAt)}</div>
                 </div>
-                
+
                 <div class="record-details">
                     <div class="detail-row">
                         <span class="detail-label">สถานที่:</span>
@@ -635,9 +635,9 @@ function renderRecords() {
                         </div>
                     ` : ''}
                 </div>
-                
+
                 ${comparisonHTML}
-                
+
                 ${!isReassessment ? `
                     <div style="margin-top: 1rem;">
                         <button class="reassess-btn" onclick="startReassessment('${record.id}')">
@@ -656,31 +656,31 @@ function startReassessment(recordId) {
         alert('ไม่พบข้อมูลการบันทึก');
         return;
     }
-    
+
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
+
     // Set reassessment state
     state.parentRecordId = recordId;
     state.isReassessment = true;
-    
+
     // Pre-fill form with previous data
     state.hn = record.hn;
     state.location = record.location;
     state.ageGroup = record.ageGroup;
-    
+
     document.getElementById('hn-input-top').value = record.hn;
     document.getElementById('location-select').value = record.location === 'อื่นๆ' ? record.location : (record.location || '');
-    
+
     // Select age group
     selectAge(record.ageGroup);
-    
+
     // Show reassessment indicator
     const formTitle = document.querySelector('h1');
     if (formTitle && !formTitle.innerHTML.includes('ประเมินซ้ำ')) {
         formTitle.innerHTML = formTitle.innerHTML + ' <span style="background: #fbbf24; color: white; padding: 0.25rem 0.75rem; border-radius: 0.5rem; margin-left: 0.5rem; font-size: 1rem;">กำลังประเมินซ้ำ</span>';
     }
-    
+
     alert(`กำลังประเมินซ้ำสำหรับ HN: ${record.hn}\nกรุณากรอกข้อมูลใหม่และบันทึก`);
 }
 
@@ -706,7 +706,7 @@ function resetForm() {
     state.spo2 = '';
     state.parentRecordId = null;
     state.isReassessment = false;
-    
+
     document.getElementById('hn-input-top').value = '';
     document.getElementById('location-select').value = '';
     document.getElementById('location-other').value = '';
@@ -718,56 +718,56 @@ function resetForm() {
     document.getElementById('transfer-destination-section').style.display = 'none';
     document.getElementById('additional-risk').checked = false;
     document.getElementById('age-error').style.display = 'none';
-    
+
     // Clear reassessment indicator from title
     const formTitle = document.querySelector('h1');
     if (formTitle) {
         formTitle.innerHTML = formTitle.innerHTML.replace(/<span style="background: #fbbf24.*?<\/span>/, '');
     }
-    
+
     // Reset PR and RR inputs
     const prInput = document.getElementById('pr-input');
     const rrInput = document.getElementById('rr-input');
     if (prInput) prInput.value = '';
     if (rrInput) rrInput.value = '';
-    
+
     // Reset vital signs inputs
     document.getElementById('temp-input').value = '';
     document.getElementById('pulse-input').value = '';
     document.getElementById('rr-vs-input').value = '';
     document.getElementById('bp-input').value = '';
     document.getElementById('spo2-input').value = '';
-    
+
     // Hide vital signs input containers
     const prContainer = document.getElementById('pr-input-container');
     const rrContainer = document.getElementById('rr-input-container');
     if (prContainer) prContainer.style.display = 'none';
     if (rrContainer) rrContainer.style.display = 'none';
-    
+
     // Reset headers to default text
     const cardioHeader = document.querySelector('#cardiovascular-section .section-header h2');
     if (cardioHeader) {
         cardioHeader.innerHTML = 'ระบบไหลเวียนโลหิต';
     }
-    
+
     const respHeader = document.querySelector('#respiratory-section .section-header h2');
     if (respHeader) {
         respHeader.innerHTML = 'ระบบทางเดินหายใจ';
     }
-    
+
     document.querySelectorAll('.symptom-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.value === 'no');
     });
-    
+
     document.querySelectorAll('.age-button').forEach(btn => btn.classList.remove('selected'));
     document.querySelectorAll('.score-button').forEach(btn => btn.classList.remove('selected'));
-    
+
     updateTotalScore();
 }
 
 function renderRecords() {
     const container = document.getElementById('records-list');
-    
+
     if (state.records.length === 0) {
         container.innerHTML = `
             <div class="empty-records">
@@ -778,9 +778,9 @@ function renderRecords() {
         `;
         return;
     }
-    
+
     container.innerHTML = '';
-    
+
     state.records.forEach(record => {
         const timestamp = new Date(record.createdAt).toLocaleString('th-TH', {
             year: 'numeric',
@@ -790,7 +790,7 @@ function renderRecords() {
             minute: '2-digit',
             second: '2-digit'
         });
-        
+
         const card = document.createElement('div');
         card.className = 'record-card';
         card.innerHTML = `
