@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="th">
     <head>
@@ -8,15 +9,12 @@
     </head>
     <body>
         <div class="container">
-            <!-- Header -->
             <header class="header">
                 <h1>SUANDOK PEWS</h1>
                 <p>Pediatric Early Warning Signs</p>
             </header>
 
-            <!-- Main Card -->
             <main class="main-card">
-                <!-- Patient HN Input -->
                 <div class="form-section">
                     <label for="hn-input-top">เลข HN ผู้ป่วย</label>
                     <input
@@ -26,7 +24,6 @@
                     />
                 </div>
 
-                <!-- Location Selection -->
                 <div class="form-section">
                     <label for="location-select">Location การประเมิน</label>
                     <select id="location-select" class="location-select">
@@ -47,7 +44,6 @@
                     />
                 </div>
 
-                <!-- Age Selection -->
                 <section class="scoring-section">
                     <div class="section-header">
                         <div class="badge badge-purple">0</div>
@@ -63,7 +59,6 @@
                     <div class="age-grid" id="age-grid"></div>
                 </section>
 
-                <!-- Behavior Scoring -->
                 <section class="scoring-section">
                     <div class="section-header">
                         <div class="badge badge-blue">1</div>
@@ -72,7 +67,6 @@
                     <div class="score-grid" id="behavior-grid"></div>
                 </section>
 
-                <!-- Cardiovascular Scoring -->
                 <section class="scoring-section" id="cardiovascular-section">
                     <div class="section-header">
                         <div class="badge badge-red">2</div>
@@ -103,7 +97,6 @@
                     <div class="score-grid" id="cardiovascular-grid"></div>
                 </section>
 
-                <!-- Respiratory Scoring -->
                 <section class="scoring-section" id="respiratory-section">
                     <div class="section-header">
                         <div class="badge badge-purple-2">3</div>
@@ -134,7 +127,6 @@
                     <div class="score-grid" id="respiratory-grid"></div>
                 </section>
 
-                <!-- Additional Risk -->
                 <section class="scoring-section">
                     <label class="checkbox-label">
                         <input type="checkbox" id="additional-risk" />
@@ -146,10 +138,8 @@
                     </label>
                 </section>
 
-                <!-- Total Score Display -->
                 <div id="total-score-display" class="total-score"></div>
 
-                <!-- Vital Signs Section -->
                 <div class="vital-signs-section">
                     <h3>📊 สัญญาณชีพ (Vital Signs)</h3>
                     <div class="vital-signs-grid">
@@ -205,7 +195,6 @@
                     </div>
                 </div>
 
-                <!-- Patient Form -->
                 <div class="patient-form">
                     <h3>📋 บันทึกข้อมูล</h3>
 
@@ -267,7 +256,6 @@
                     </div>
                 </div>
 
-                <!-- Records History -->
                 <div class="records-history">
                     <h3>ประวัติการบันทึก</h3>
                     <div id="records-list"></div>
