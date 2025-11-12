@@ -750,6 +750,7 @@ body {
 
 .btn-transfer {
     background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    color: white;
 }
 
 .btn-transfer:hover {
@@ -840,6 +841,22 @@ body {
     padding: 0.25rem 0.75rem;
     border-radius: 0.5rem;
     font-weight: 600;
+}
+
+.total-score-badge.score-green {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.total-score-badge.score-yellow {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.total-score-badge.score-orange {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+.total-score-badge.score-red {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
 .action-badge {
@@ -1092,6 +1109,47 @@ body {
     transform: translateY(-3px) scale(1.05);
     box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
     background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.delete-btn {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.delete-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.delete-btn:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+.delete-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
 }
 
 @media (max-width: 768px) {
