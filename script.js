@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const chdSelected = document.getElementById('chd-selected');
             const displayText = chdType === 'acyanotic' ? 'Acyanotic CHD' : 'Cyanotic CHD';
-            const icon = chdType === 'acyanotic' ? '💙' : '💜';
+            const icon = chdType === 'acyanotic' ? '' : '';
             
             chdSelected.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
