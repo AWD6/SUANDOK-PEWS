@@ -1023,31 +1023,30 @@ body {
     .score-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .action-buttons {
         flex-direction: column;
     }
-    
+
     .action-btn {
         width: 100%;
     }
-    
+
     .vital-input-container {
         flex-direction: column;
         align-items: flex-start;
     }
-    
+
     .vital-input-container input[type="number"] {
         width: 100%;
     }
-    
+
     .comparison-table {
         font-size: 0.75rem;
     }
-    
+
     .comparison-table th,
     .comparison-table td {
         padding: 0.5rem;
-    }
     }
 }
