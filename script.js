@@ -731,8 +731,7 @@ function resetForm() {
 
 function renderRecords() {
     const container = document.getElementById('records-list');
-
-    if (state.records.length === 0) {
+    if (!state.records || state.records.length === 0) {
         container.innerHTML = `
             <div class="empty-records">
                 <div class="empty-icon">📋</div>
@@ -743,43 +742,137 @@ function renderRecords() {
         return;
     }
 
-    container.innerHTML = '';
+    container.innerHTML = state.records.map((record, index) => {
+        const ageGroup = ageGroups.find(a => a.id === record.ageGroup);
+        const ageText = ageGroup ? `${ageGroup.name} (${ageGroup.ageRange})` : 'ไม่ระบุ';
+        const isReassessment = record.isReassessment;
+        const parentRecord = isReassessment ? state.records.find(r => r.id === record.parentRecordId) : null;
 
-    state.records.forEach(record => {
-        const timestamp = new Date(record.createdAt).toLocaleString('th-TH', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-        });
+        let comparisonHTML = '';
+        if (isReassessment && parentRecord) {
+            comparisonHTML = `
+                <div class="comparison-container">
+                    <h4>📊 เปรียบเทียบผลการประเมิน</h4>
+                    <div class="comparison-grid">
+                        <div class="comparison-column">
+                            <div class="comparison-header">
+                                <span class="comparison-badge">1</span>
+                                <div>
+                                    <div class="comparison-title">ครั้งที่ 1</div>
+                                    <div class="comparison-time">${formatDateTime(parentRecord.createdAt)}</div>
+                                </div>
+                            </div>
+                            <div class="comparison-data">
+                                <div class="data-item">
+                                    <span class="data-label">คะแนนรวม</span>
+                                    <span class="data-value score-value">${parentRecord.totalScore}</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-label">Temp</span>
+                                    <span class="data-value">${parentRecord.temperature} °C</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-label">PR</span>
+                                    <span class="data-value">${parentRecord.pulse} bpm</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-label">RR</span>
+                                    <span class="data-value">${parentRecord.rrVitalSign} tpm</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-label">BP</span>
+                                    <span class="data-value">${parentRecord.bloodPressure}</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-label">SpO₂</span>
+                                    <span class="data-value">${parentRecord.spo2}%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="comparison-arrow">→</div>
+                        
+                        <div class="comparison-column highlight">
+                            <div class="comparison-header">
+                                <span class="comparison-badge">2</span>
+                                <div>
+                                    <div class="comparison-title">ครั้งที่ 2 (ประเมินซ้ำ)</div>
+                                    <div class="comparison-time">${formatDateTime(record.createdAt)}</div>
+                                </div>
+                            </div>
+                            <div class="comparison-data">
+                                <div class="data-item ${record.totalScore !== parentRecord.totalScore ? 'changed' : ''}">
+                                    <span class="data-label">คะแนนรวม</span>
+                                    <span class="data-value score-value">${record.totalScore}</span>
+                                </div>
+                                <div class="data-item ${record.temperature !== parentRecord.temperature ? 'changed' : ''}">
+                                    <span class="data-label">Temp</span>
+                                    <span class="data-value">${record.temperature} °C</span>
+                                </div>
+                                <div class="data-item ${record.pulse !== parentRecord.pulse ? 'changed' : ''}">
+                                    <span class="data-label">PR</span>
+                                    <span class="data-value">${record.pulse} bpm</span>
+                                </div>
+                                <div class="data-item ${record.rrVitalSign !== parentRecord.rrVitalSign ? 'changed' : ''}">
+                                    <span class="data-label">RR</span>
+                                    <span class="data-value">${record.rrVitalSign} tpm</span>
+                                </div>
+                                <div class="data-item ${record.bloodPressure !== parentRecord.bloodPressure ? 'changed' : ''}">
+                                    <span class="data-label">BP</span>
+                                    <span class="data-value">${record.bloodPressure}</span>
+                                </div>
+                                <div class="data-item ${record.spo2 !== parentRecord.spo2 ? 'changed' : ''}">
+                                    <span class="data-label">SpO₂</span>
+                                    <span class="data-value">${record.spo2}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
 
-        const card = document.createElement('div');
-        card.className = 'record-card';
-        card.innerHTML = `
-            <div class="record-header">
-                <div>
-                    <div class="record-timestamp">${timestamp}</div>
-                    <div class="record-hn">HN: ${record.hn}</div>
+        return `
+            <div class="record-card">
+                <div class="record-header">
+                    <div>
+                        <strong>HN:</strong> ${record.hn}
+                        ${isReassessment ? '<span class="reassessment-badge">ประเมินซ้ำ</span>' : ''}
+                    </div>
+                    <div class="record-date">${formatDateTime(record.createdAt)}</div>
                 </div>
-                <div class="record-actions">
-                    <span class="action-badge ${record.action.toLowerCase()}">${record.action}</span>
-                    <button class="delete-btn" onclick="deleteRecord('${record.id}')">🗑️</button>
+
+                <div class="record-details">
+                    <div class="detail-row">
+                        <span class="detail-label">สถานที่:</span>
+                        <span>${record.location}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">ช่วงอายุ:</span>
+                        <span>${ageText}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">คะแนนรวม:</span>
+                        <span class="total-score-badge">${record.totalScore}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">การดำเนินการ:</span>
+                        <span class="action-badge">${record.action}</span>
+                    </div>
                 </div>
+
+                ${comparisonHTML}
+
+                ${!isReassessment ? `
+                    <div style="margin-top: 1rem;">
+                        <button class="reassess-btn" onclick="startReassessment('${record.id}')">
+                            🔄 ประเมินซ้ำ
+                        </button>
+                    </div>
+                ` : ''}
             </div>
-            <div class="record-details">
-                <div><strong>Location:</strong> ${record.location}</div>
-                <div><strong>PEWS Score:</strong> <span style="color: #2563eb; font-weight: 600; font-size: 1rem;">${record.totalScore}</span></div>
-                <div><strong>PR:</strong> ${record.prValue} ครั้ง/นาที</div>
-                <div><strong>RR:</strong> ${record.rrValue} ครั้ง/นาที</div>
-                <div><strong>อาการเปลี่ยนแปลง:</strong> ${record.symptomsChanged === 'yes' ? 'มี' : 'ไม่มี'}</div>
-                ${record.transferDestination ? `<div><strong>ส่งต่อไปที่:</strong> ${record.transferDestination}</div>` : ''}
-            </div>
-            ${record.nursingNotes ? `<div class="record-notes"><strong>การพยาบาล:</strong> ${record.nursingNotes}</div>` : ''}
         `;
-        container.appendChild(card);
-    });
+    }).join('');
 }
 
 function deleteRecord(id) {
