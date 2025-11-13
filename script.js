@@ -131,17 +131,29 @@ document.addEventListener('DOMContentLoaded', function() {
         state.transferDestinationOther = e.target.value;
     });
 
-    // Vital signs event listeners
+    // Vital signs event listeners with auto-focus
     document.getElementById('temp-input').addEventListener('input', (e) => {
         state.temperature = e.target.value;
+        // Auto-focus to pulse input when valid temperature is entered
+        if (e.target.value && parseFloat(e.target.value) >= 30 && parseFloat(e.target.value) <= 45) {
+            document.getElementById('pulse-input').focus();
+        }
     });
 
     document.getElementById('pulse-input').addEventListener('input', (e) => {
         state.pulse = e.target.value;
+        // Auto-focus to RR input when valid pulse is entered
+        if (e.target.value && parseInt(e.target.value) > 0) {
+            document.getElementById('rr-vs-input').focus();
+        }
     });
 
     document.getElementById('rr-vs-input').addEventListener('input', (e) => {
         state.rrVitalSign = e.target.value;
+        // Auto-focus to BP input when valid RR is entered
+        if (e.target.value && parseInt(e.target.value) > 0) {
+            document.getElementById('bp-input').focus();
+        }
     });
 
     // BP input with auto-formatting
@@ -156,6 +168,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         e.target.value = value;
         state.bloodPressure = value;
+        
+        // Auto-focus to SpO2 when BP format is complete (e.g., 120/80)
+        if (value.includes('/') && value.split('/')[1].length >= 2) {
+            document.getElementById('spo2-input').focus();
+        }
     });
     
     bpInput.addEventListener('keydown', (e) => {
