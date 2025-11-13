@@ -144,8 +144,29 @@ document.addEventListener('DOMContentLoaded', function() {
         state.rrVitalSign = e.target.value;
     });
 
-    document.getElementById('bp-input').addEventListener('input', (e) => {
-        state.bloodPressure = e.target.value;
+    // BP input with auto-formatting
+    const bpInput = document.getElementById('bp-input');
+    bpInput.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/[^\d]/g, ''); // Remove non-digits
+        
+        if (value.length > 3) {
+            // Auto-add "/" after 3 digits
+            value = value.slice(0, 3) + '/' + value.slice(3, 6);
+        }
+        
+        e.target.value = value;
+        state.bloodPressure = value;
+    });
+    
+    bpInput.addEventListener('keydown', (e) => {
+        // Allow backspace, delete, tab, and arrow keys
+        if ([8, 9, 37, 38, 39, 40, 46].includes(e.keyCode)) {
+            return;
+        }
+        // Only allow numbers
+        if (e.key < '0' || e.key > '9') {
+            e.preventDefault();
+        }
     });
 
     document.getElementById('spo2-input').addEventListener('input', (e) => {
@@ -188,11 +209,11 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.addEventListener('click', function() {
             const chdType = this.dataset.chd;
             state.chdType = chdType;
-            
+
             const chdSelected = document.getElementById('chd-selected');
             const displayText = chdType === 'acyanotic' ? 'Acyanotic CHD' : 'Cyanotic CHD';
             const icon = chdType === 'acyanotic' ? '' : '';
-            
+
             chdSelected.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <span>${icon}</span>
@@ -201,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
             chdSelected.style.display = 'block';
-            
+
             document.getElementById('chd-modal').style.display = 'none';
         });
     });
