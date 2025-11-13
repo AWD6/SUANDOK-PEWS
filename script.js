@@ -131,53 +131,42 @@ document.addEventListener('DOMContentLoaded', function() {
         state.transferDestinationOther = e.target.value;
     });
 
-    // Vital signs event listeners with auto-focus
+    // Vital signs event listeners
     document.getElementById('temp-input').addEventListener('input', (e) => {
         state.temperature = e.target.value;
-        // Auto-focus to pulse input when valid temperature is entered
-        if (e.target.value && parseFloat(e.target.value) >= 30 && parseFloat(e.target.value) <= 45) {
-            document.getElementById('pulse-input').focus();
-        }
     });
 
     document.getElementById('pulse-input').addEventListener('input', (e) => {
         state.pulse = e.target.value;
-        // Auto-focus to RR input when valid pulse is entered
-        if (e.target.value && parseInt(e.target.value) > 0) {
-            document.getElementById('rr-vs-input').focus();
-        }
     });
 
     document.getElementById('rr-vs-input').addEventListener('input', (e) => {
         state.rrVitalSign = e.target.value;
-        // Auto-focus to BP input when valid RR is entered
-        if (e.target.value && parseInt(e.target.value) > 0) {
-            document.getElementById('bp-input').focus();
-        }
     });
 
-    // BP input with auto-formatting
+    // BP input with auto-formatting - supports 2-3 digit systolic pressure
     const bpInput = document.getElementById('bp-input');
     bpInput.addEventListener('input', (e) => {
         let value = e.target.value.replace(/[^\d]/g, ''); // Remove non-digits
         
-        if (value.length > 3) {
-            // Auto-add "/" after 3 digits
-            value = value.slice(0, 3) + '/' + value.slice(3, 6);
+        if (value.length > 2) {
+            // Auto-add "/" after 2-3 digits based on input
+            // If user types more than 2 digits, check if we should add slash
+            const firstPart = value.slice(0, 3);
+            const secondPart = value.slice(3);
+            
+            if (secondPart.length > 0) {
+                value = firstPart + '/' + secondPart.slice(0, 3);
+            }
         }
         
         e.target.value = value;
         state.bloodPressure = value;
-        
-        // Auto-focus to SpO2 when BP format is complete (e.g., 120/80)
-        if (value.includes('/') && value.split('/')[1].length >= 2) {
-            document.getElementById('spo2-input').focus();
-        }
     });
     
     bpInput.addEventListener('keydown', (e) => {
-        // Allow backspace, delete, tab, and arrow keys
-        if ([8, 9, 37, 38, 39, 40, 46].includes(e.keyCode)) {
+        // Allow backspace, delete, tab, arrow keys, and slash
+        if ([8, 9, 37, 38, 39, 40, 46, 191].includes(e.keyCode) || e.key === '/') {
             return;
         }
         // Only allow numbers
