@@ -683,6 +683,32 @@ function renderRecords() {
                     ` : ''}
                 </div>
 
+                <div class="vital-signs-summary">
+                    <h4>📊 สัญญาณชีพที่ประเมิน</h4>
+                    <div class="vital-signs-summary-grid">
+                        <div class="vital-summary-item">
+                            <span class="vital-summary-label">Temp:</span>
+                            <span class="vital-summary-value">${record.temperature} °C</span>
+                        </div>
+                        <div class="vital-summary-item">
+                            <span class="vital-summary-label">PR:</span>
+                            <span class="vital-summary-value">${record.pulse} bpm</span>
+                        </div>
+                        <div class="vital-summary-item">
+                            <span class="vital-summary-label">RR:</span>
+                            <span class="vital-summary-value">${record.rrVitalSign} tpm</span>
+                        </div>
+                        <div class="vital-summary-item">
+                            <span class="vital-summary-label">BP:</span>
+                            <span class="vital-summary-value">${record.bloodPressure} mmHg</span>
+                        </div>
+                        <div class="vital-summary-item">
+                            <span class="vital-summary-label">SpO₂:</span>
+                            <span class="vital-summary-value">${record.spo2}%</span>
+                        </div>
+                    </div>
+                </div>
+
                 ${comparisonHTML}
 
                 <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
