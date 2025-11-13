@@ -490,6 +490,13 @@ function saveRecord(action) {
         ? `อื่นๆ: ${state.transferDestinationOther}`
         : state.transferDestination;
 
+    // Get vital signs values from inputs
+    const tempValue = document.getElementById('temp-input').value || 'ไม่ระบุ';
+    const pulseValue = document.getElementById('pulse-input').value || 'ไม่ระบุ';
+    const rrVsValue = document.getElementById('rr-vs-input').value || 'ไม่ระบุ';
+    const bpValue = document.getElementById('bp-input').value || 'ไม่ระบุ';
+    const spo2Value = document.getElementById('spo2-input').value || 'ไม่ระบุ';
+
     const record = {
         id: Date.now().toString(),
         hn: state.hn.trim() || 'ไม่ระบุ',
@@ -506,11 +513,11 @@ function saveRecord(action) {
         transferDestination: action === 'Transfer' ? transferValue : '',
         prValue: state.prValue || 'ไม่ระบุ',
         rrValue: state.rrValue || 'ไม่ระบุ',
-        temperature: state.temperature || 'ไม่ระบุ',
-        pulse: state.pulse || 'ไม่ระบุ',
-        rrVitalSign: state.rrVitalSign || 'ไม่ระบุ',
-        bloodPressure: state.bloodPressure || 'ไม่ระบุ',
-        spo2: state.spo2 || 'ไม่ระบุ',
+        temperature: tempValue,
+        pulse: pulseValue,
+        rrVitalSign: rrVsValue,
+        bloodPressure: bpValue,
+        spo2: spo2Value,
         chdType: state.chdType || '',
         parentRecordId: state.parentRecordId,
         isReassessment: state.isReassessment,
