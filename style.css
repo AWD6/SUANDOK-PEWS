@@ -497,6 +497,52 @@ body {
     align-items: center;
     gap: 1.25rem;
     padding: 1.25rem;
+
+/* Vital Signs Summary in Records */
+.vital-signs-summary {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 2px solid #7dd3fc;
+    border-radius: 0.5rem;
+}
+
+.vital-signs-summary h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0c4a6e;
+    margin-bottom: 0.75rem;
+}
+
+.vital-signs-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+}
+
+.vital-summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 0.375rem;
+    border: 1px solid #bae6fd;
+}
+
+.vital-summary-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+.vital-summary-value {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #0c4a6e;
+}
+
+
     background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
     border: 2px solid #fdba74;
     border-radius: 0.75rem;
