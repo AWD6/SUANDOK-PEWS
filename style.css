@@ -987,6 +987,21 @@ body {
     transform: translateY(-2px);
 }
 
+.pals-button.active {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    transform: scale(1.05);
+}
+
+.pals-badge {
+    background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
 .chd-selected {
     padding: 1rem;
     background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
