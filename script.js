@@ -1,1470 +1,910 @@
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Sarabun', 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(135deg, #eff6ff 0%, #f9fafb 50%, #fef3c7 100%);
-    min-height: 100vh;
-    padding: 2rem 1rem;
-}
-
-.container {
-    max-width: 1100px;
-    margin: 0 auto;
-}
-
-/* Header */
-.header {
-    background: white;
-    border-radius: 1rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    padding: 2.5rem;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    border-top: 4px solid #3b82f6;
-}
-
-.header h1 {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #1e3a8a;
-    margin-bottom: 0.5rem;
-}
-
-.header p {
-    color: #2563eb;
-    font-weight: 500;
-    font-size: 1.25rem;
-}
-
-/* Main Card */
-.main-card {
-    background: white;
-    border-radius: 1rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    padding: 2.5rem;
-}
-
-/* Form Section */
-.form-section {
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-    border-bottom: 2px solid #e5e7eb;
-}
-
-.form-section label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 0.5rem;
-}
-
-.form-section input,
-.form-section textarea {
-    width: 100%;
-    font-size: 1rem;
-    border: 2px solid #d1d5db;
-    border-radius: 0.5rem;
-    padding: 0.875rem;
-    transition: all 0.2s;
-}
-
-.form-section input:focus,
-.form-section textarea:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-}
-
-.form-section textarea {
-    resize: vertical;
-}
-
-.form-section select,
-.transfer-select {
-    width: 100%;
-    font-size: 1rem;
-    border: 2px solid #d1d5db;
-    border-radius: 0.5rem;
-    padding: 0.875rem;
-    transition: all 0.2s;
-    background: white;
-    cursor: pointer;
-}
-
-.form-section select:focus,
-.transfer-select:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-}
-
-/* Vital Signs Section */
-.vital-signs-section {
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-    border: 2px solid #7dd3fc;
-    border-radius: 0.75rem;
-}
-
-.vital-signs-section h3 {
-    font-size: 1.125rem;
-    font-weight: bold;
-    color: #0c4a6e;
-    margin-bottom: 1rem;
-}
-
-.vital-signs-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-}
-
-.vital-input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.vital-input-group label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #0c4a6e;
-}
-
-.vital-input-group input {
-    width: 100%;
-    font-size: 1rem;
-    font-weight: 600;
-    border: 2px solid #3b82f6;
-    border-radius: 0.5rem;
-    padding: 0.75rem;
-    text-align: center;
-    transition: all 0.2s;
-}
-
-.vital-input-group input:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
-    transform: scale(1.05);
-}
-
-/* Vital Signs Input Container */
-.vital-input-container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding: 1.25rem;
-    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-    border: 2px solid #7dd3fc;
-    border-radius: 0.75rem;
-    animation: slideDown 0.3s ease-out;
-}
-
-.vital-input-container label {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #0c4a6e;
-    margin: 0;
-    white-space: nowrap;
-}
-
-.vital-input-container input[type="number"] {
-    width: 120px;
-    font-size: 1rem;
-    font-weight: 600;
-    border: 2px solid #3b82f6;
-    border-radius: 0.5rem;
-    padding: 0.75rem;
-    text-align: center;
-    transition: all 0.2s;
-}
-
-.vital-input-container input[type="number"]:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
-    transform: scale(1.05);
-}
-
-.vital-input-container .unit-text {
-    font-size: 0.875rem;
-    color: #475569;
-    font-weight: 500;
-}
-
-/* Scoring Section */
-.scoring-section {
-    margin-bottom: 2.5rem;
-}
-
-.section-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-}
-
-.section-header h2 {
-    font-size: 1.375rem;
-    font-weight: bold;
-    color: #1f2937;
-}
-
-.required {
-    color: #ef4444;
-}
-
-.badge {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-    font-size: 0.875rem;
-}
-
-.badge-purple {
-    background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
-}
-
-.badge-blue {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-}
-
-.badge-red {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-}
-
-.badge-purple-2 {
-    background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
-}
-
-/* Error & Warning Messages */
-.error-message {
-    margin-bottom: 1rem;
-    padding: 0.75rem;
-    background: #fee2e2;
-    border: 2px solid #fca5a5;
-    border-radius: 0.5rem;
-    color: #991b1b;
-    font-size: 0.875rem;
-    font-weight: 600;
-}
-
-.warning-message {
-    margin-bottom: 1rem;
-    padding: 0.75rem;
-    background: #f5f3ff;
-    border: 2px solid #c4b5fd;
-    border-radius: 0.5rem;
-    color: #6b21a8;
-    font-size: 0.875rem;
-    font-weight: 500;
-}
-
-/* Age Grid */
-.age-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-}
-
-.age-button {
-    min-height: 80px;
-    border-radius: 0.75rem;
-    border: 2px solid #e5e7eb;
-    background: white;
-    padding: 1.25rem;
-    text-align: left;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.age-button::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(168, 85, 247, 0.1);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.age-button:active::before {
-    width: 300px;
-    height: 300px;
-}
-
-.age-button:hover {
-    border-color: #a855f7;
-    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2);
-    transform: translateY(-2px) scale(1.02);
-}
-
-.age-button.selected {
-    border-color: #a855f7;
-    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
-    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
-    animation: selectBounce 0.5s ease-out;
-}
-
-.age-button.selected::after {
-    content: '✓';
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #a855f7;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: bold;
-    animation: pulse 2s infinite;
-}
-
-@keyframes selectBounce {
-    0% {
-        transform: scale(1);
+// Age groups data
+const ageGroups = [
+    {
+        id: 'newborn',
+        name: 'Newborn',
+        ageRange: 'แรกเกิด-1 เดือน',
+        heartRate: { min: 100, max: 180 },
+        respiratoryRate: { min: 40, max: 60 }
+    },
+    {
+        id: 'infant',
+        name: 'Infant',
+        ageRange: '1-12 เดือน',
+        heartRate: { min: 100, max: 180 },
+        respiratoryRate: { min: 35, max: 40 }
+    },
+    {
+        id: 'toddler',
+        name: 'Toddler',
+        ageRange: '13 เดือน - 3 ปี',
+        heartRate: { min: 70, max: 110 },
+        respiratoryRate: { min: 25, max: 30 }
+    },
+    {
+        id: 'preschool',
+        name: 'Preschool',
+        ageRange: '4-6 ปี',
+        heartRate: { min: 70, max: 110 },
+        respiratoryRate: { min: 21, max: 23 }
+    },
+    {
+        id: 'schoolage',
+        name: 'School age',
+        ageRange: '7-12 ปี',
+        heartRate: { min: 70, max: 110 },
+        respiratoryRate: { min: 19, max: 21 }
+    },
+    {
+        id: 'adolescent',
+        name: 'Adolescent',
+        ageRange: '13-19 ปี',
+        heartRate: { min: 55, max: 90 },
+        respiratoryRate: { min: 16, max: 18 }
     }
-    50% {
-        transform: scale(1.05);
+];
+
+// Behavior options
+const behaviorOptions = [
+    { score: 0, label: "เล่นเหมาะสม" },
+    { score: 1, label: "หลับ" },
+    { score: 2, label: "ร้องไห้งอแง พักไม่ได้" },
+    { score: 3, label: "ซึม/สับสน หรือ ตอบสนองต่อการกระตุ้นความปวดลดลง" }
+];
+
+// State
+let state = {
+    ageGroup: null,
+    behaviorScore: null,
+    cardiovascularScore: null,
+    respiratoryScore: null,
+    additionalRisk: false,
+    hn: '',
+    location: '',
+    locationOther: '',
+    nursingNotes: '',
+    symptomsChanged: 'no',
+    transferDestination: '',
+    transferDestinationOther: '',
+    prValue: '',
+    rrValue: '',
+    temperature: '',
+    pulse: '',
+    rrVitalSign: '',
+    bloodPressure: '',
+    spo2: '',
+    parentRecordId: null,
+    isReassessment: false,
+    chdType: '',
+    palsEnabled: false,
+    records: []
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    loadRecords();
+    renderAgeGrid();
+    renderBehaviorGrid();
+    renderCardiovascularGrid();
+    renderRespiratoryGrid();
+    updateTotalScore();
+    renderRecords();
+
+    // Event listeners
+    document.getElementById('hn-input-top').addEventListener('input', (e) => {
+        state.hn = e.target.value;
+    });
+
+    document.getElementById('location-select').addEventListener('change', (e) => {
+        state.location = e.target.value;
+        const otherInput = document.getElementById('location-other');
+        if (e.target.value === 'อื่นๆ') {
+            otherInput.style.display = 'block';
+        } else {
+            otherInput.style.display = 'none';
+            state.locationOther = '';
+            otherInput.value = '';
+        }
+    });
+
+    document.getElementById('location-other').addEventListener('input', (e) => {
+        state.locationOther = e.target.value;
+    });
+
+    document.getElementById('nursing-notes').addEventListener('input', (e) => {
+        state.nursingNotes = e.target.value;
+    });
+
+    // Transfer destination dropdown handler
+    document.getElementById('transfer-destination-select').addEventListener('change', (e) => {
+        state.transferDestination = e.target.value;
+        const otherInput = document.getElementById('transfer-destination-other');
+        if (e.target.value === 'อื่นๆ') {
+            otherInput.style.display = 'block';
+        } else {
+            otherInput.style.display = 'none';
+            state.transferDestinationOther = '';
+            otherInput.value = '';
+        }
+    });
+
+    document.getElementById('transfer-destination-other').addEventListener('input', (e) => {
+        state.transferDestinationOther = e.target.value;
+    });
+
+    // Vital signs event listeners
+    document.getElementById('temp-input').addEventListener('input', (e) => {
+        state.temperature = e.target.value;
+    });
+
+    document.getElementById('pulse-input').addEventListener('input', (e) => {
+        state.pulse = e.target.value;
+    });
+
+    document.getElementById('rr-vs-input').addEventListener('input', (e) => {
+        state.rrVitalSign = e.target.value;
+    });
+
+    // BP input with auto-formatting - supports 2-3 digit systolic pressure
+    const bpInput = document.getElementById('bp-input');
+    bpInput.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/[^\d]/g, ''); // Remove non-digits
+        
+        if (value.length > 2) {
+            // Auto-add "/" after 2-3 digits based on input
+            // If user types more than 2 digits, check if we should add slash
+            const firstPart = value.slice(0, 3);
+            const secondPart = value.slice(3);
+            
+            if (secondPart.length > 0) {
+                value = firstPart + '/' + secondPart.slice(0, 3);
+            }
+        }
+        
+        e.target.value = value;
+        state.bloodPressure = value;
+    });
+    
+    bpInput.addEventListener('keydown', (e) => {
+        // Allow backspace, delete, tab, arrow keys, and slash
+        if ([8, 9, 37, 38, 39, 40, 46, 191].includes(e.keyCode) || e.key === '/') {
+            return;
+        }
+        // Only allow numbers
+        if (e.key < '0' || e.key > '9') {
+            e.preventDefault();
+        }
+    });
+
+    document.getElementById('spo2-input').addEventListener('input', (e) => {
+        state.spo2 = e.target.value;
+    });
+
+    document.getElementById('additional-risk').addEventListener('change', (e) => {
+        state.additionalRisk = e.target.checked;
+        updateTotalScore();
+    });
+
+    document.querySelectorAll('.symptom-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.symptom-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            state.symptomsChanged = this.dataset.value;
+        });
+    });
+
+    document.querySelector('.btn-transfer').addEventListener('click', () => {
+        const transferSection = document.getElementById('transfer-destination-section');
+        if (transferSection.style.display === 'none') {
+            transferSection.style.display = 'block';
+        } else {
+            saveRecord('Transfer');
+        }
+    });
+    document.querySelector('.btn-reset').addEventListener('click', resetForm);
+
+    // PALS button handler - toggle on/off
+    document.getElementById('pals-btn').addEventListener('click', () => {
+        state.palsEnabled = !state.palsEnabled;
+        const palsBtn = document.getElementById('pals-btn');
+        
+        if (state.palsEnabled) {
+            palsBtn.classList.add('active');
+        } else {
+            palsBtn.classList.remove('active');
+        }
+    });
+
+    // CHD Modal handlers
+    document.getElementById('chd-btn').addEventListener('click', () => {
+        document.getElementById('chd-modal').style.display = 'flex';
+    });
+
+    document.getElementById('modal-close').addEventListener('click', () => {
+        document.getElementById('chd-modal').style.display = 'none';
+    });
+
+    document.querySelectorAll('.chd-option-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const chdType = this.dataset.chd;
+            state.chdType = chdType;
+
+            const chdSelected = document.getElementById('chd-selected');
+            const displayText = chdType === 'acyanotic' ? 'Acyanotic CHD' : 'Cyanotic CHD';
+            const icon = chdType === 'acyanotic' ? '' : '';
+
+            chdSelected.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span>${icon}</span>
+                    <span style="font-weight: 600;">${displayText}</span>
+                    <button onclick="clearCHD()" style="margin-left: auto; padding: 0.25rem 0.5rem; background: #ef4444; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">ยกเลิก</button>
+                </div>
+            `;
+            chdSelected.style.display = 'block';
+
+            document.getElementById('chd-modal').style.display = 'none';
+        });
+    });
+
+    // Close modal on outside click
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('chd-modal');
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+});
+
+function clearCHD() {
+    state.chdType = '';
+    document.getElementById('chd-selected').style.display = 'none';
+}
+
+function renderAgeGrid() {
+    const grid = document.getElementById('age-grid');
+    grid.innerHTML = '';
+
+    ageGroups.forEach(age => {
+        const button = document.createElement('button');
+        button.className = 'age-button';
+        button.innerHTML = `
+            <div class="age-name">${age.name}</div>
+            <div class="age-range">${age.ageRange}</div>
+        `;
+        button.addEventListener('click', () => selectAge(age.id));
+        grid.appendChild(button);
+    });
+}
+
+function selectAge(ageId) {
+    state.ageGroup = ageId;
+    document.getElementById('age-error').style.display = 'none';
+
+    document.querySelectorAll('.age-button').forEach((btn, index) => {
+        btn.classList.toggle('selected', ageGroups[index].id === ageId);
+    });
+
+    // Update vital signs info in section headers and show input containers
+    const ageGroup = ageGroups.find(a => a.id === ageId);
+    if (ageGroup) {
+        // Update cardiovascular header and show PR input
+        const cardioHeader = document.querySelector('#cardiovascular-section .section-header h2');
+        if (cardioHeader) {
+            cardioHeader.innerHTML = `ระบบไหลเวียนโลหิต <span style="color: #2563eb; font-weight: 600; font-size: 0.9rem; margin-left: 0.5rem;">PR ปกติ : ${ageGroup.heartRate.min} - ${ageGroup.heartRate.max} ครั้ง/นาที</span>`;
+        }
+
+        // Show PR input container
+        const prContainer = document.getElementById('pr-input-container');
+        if (prContainer) {
+            prContainer.style.display = 'flex';
+        }
+
+        // Update respiratory header and show RR input
+        const respHeader = document.querySelector('#respiratory-section .section-header h2');
+        if (respHeader) {
+            respHeader.innerHTML = `ระบบทางเดินหายใจ <span style="color: #2563eb; font-weight: 600; font-size: 0.9rem; margin-left: 0.5rem;">RR ปกติ : ${ageGroup.respiratoryRate.min} - ${ageGroup.respiratoryRate.max} ครั้ง/นาที</span>`;
+        }
+
+        // Show RR input container
+        const rrContainer = document.getElementById('rr-input-container');
+        if (rrContainer) {
+            rrContainer.style.display = 'flex';
+        }
+
+        // Add event listeners to vital signs inputs
+        const prInput = document.getElementById('pr-input');
+        const rrInput = document.getElementById('rr-input');
+
+        if (prInput && !prInput.hasAttribute('data-listener')) {
+            prInput.addEventListener('input', (e) => {
+                state.prValue = e.target.value;
+            });
+            prInput.setAttribute('data-listener', 'true');
+        }
+
+        if (rrInput && !rrInput.hasAttribute('data-listener')) {
+            rrInput.addEventListener('input', (e) => {
+                state.rrValue = e.target.value;
+            });
+            rrInput.setAttribute('data-listener', 'true');
+        }
     }
-    100% {
-        transform: scale(1);
+
+    renderCardiovascularGrid();
+    renderRespiratoryGrid();
+}
+
+function renderBehaviorGrid() {
+    const grid = document.getElementById('behavior-grid');
+    grid.innerHTML = '';
+
+    behaviorOptions.forEach(option => {
+        const button = document.createElement('button');
+        button.className = 'score-button';
+        button.innerHTML = `
+            <div class="score-label">${option.label}</div>
+            <div class="score-value">${option.score}</div>
+        `;
+        button.addEventListener('click', () => selectBehavior(option.score));
+        grid.appendChild(button);
+    });
+}
+
+function selectBehavior(score) {
+    state.behaviorScore = state.behaviorScore === score ? null : score;
+    document.querySelectorAll('#behavior-grid .score-button').forEach((btn, index) => {
+        btn.classList.toggle('selected', behaviorOptions[index].score === state.behaviorScore);
+    });
+    updateTotalScore();
+}
+
+function renderCardiovascularGrid() {
+    const grid = document.getElementById('cardiovascular-grid');
+    const warning = document.getElementById('cardiovascular-warning');
+
+    if (!state.ageGroup) {
+        warning.style.display = 'block';
+        grid.innerHTML = '';
+        return;
     }
+
+    warning.style.display = 'none';
+
+    const ageDetails = ageGroups.find(a => a.id === state.ageGroup);
+    const max = ageDetails.heartRate.max;
+    const min = ageDetails.heartRate.min;
+
+    const options = [
+        { score: 0, label: "ผิวสีชมพูดี หรือ CRT 1-2 วินาที" },
+        { score: 1, label: "ผิวสีซีด หรือ CRT 3 วินาที" },
+        { score: 2, label: `ผิวสีเทา หรือ CRT 4 วินาที หรือ ชีพจร ≥${max + 20} ครั้ง/นาที` },
+        { score: 3, label: `ผิวสีเทาและตัวลาย หรือ CRT ≥5 วินาที หรือ ชีพจร ≥${max + 30} ครั้ง/นาที หรือ ชีพจร ≤${min - 10} ครั้ง/นาที` }
+    ];
+
+    grid.innerHTML = '';
+    options.forEach(option => {
+        const button = document.createElement('button');
+        button.className = 'score-button';
+        button.innerHTML = `
+            <div class="score-label">${option.label}</div>
+            <div class="score-value">${option.score}</div>
+        `;
+        button.addEventListener('click', () => selectCardiovascular(option.score));
+        if (state.cardiovascularScore === option.score) {
+            button.classList.add('selected');
+        }
+        grid.appendChild(button);
+    });
 }
 
-.age-name {
-    font-weight: bold;
-    font-size: 0.95rem;
-    color: #1f2937;
-    margin-bottom: 0.25rem;
+function selectCardiovascular(score) {
+    state.cardiovascularScore = state.cardiovascularScore === score ? null : score;
+    renderCardiovascularGrid();
+    updateTotalScore();
 }
 
-.age-range {
-    font-size: 0.8rem;
-    color: #6b7280;
-}
+function renderRespiratoryGrid() {
+    const grid = document.getElementById('respiratory-grid');
+    const warning = document.getElementById('respiratory-warning');
 
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
+    if (!state.ageGroup) {
+        warning.style.display = 'block';
+        grid.innerHTML = '';
+        return;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+
+    warning.style.display = 'none';
+
+    const ageDetails = ageGroups.find(a => a.id === state.ageGroup);
+    const max = ageDetails.respiratoryRate.max;
+    const min = ageDetails.respiratoryRate.min;
+
+    const options = [
+        { score: 0, label: "อยู่ในช่วงค่าปกติ/ไม่มี retraction" },
+        { score: 1, label: `หายใจ ≥${max + 10} ครั้ง/นาที หรือ มี retraction หรือ FiO₂ ≥30% หรือ O₂ ≥4 LPM` },
+        { score: 2, label: `หายใจ ≥${max + 20} ครั้ง/นาที และมี retraction หรือ FiO₂ ≥40% หรือ O₂ ≥6 LPM` },
+        { score: 3, label: `หายใจ ≤${min - 5} ครั้ง/นาที + retraction + grunting หรือ FiO₂ ≥50% หรือ O₂ ≥8 LPM` }
+    ];
+
+    grid.innerHTML = '';
+    options.forEach(option => {
+        const button = document.createElement('button');
+        button.className = 'score-button';
+        button.innerHTML = `
+            <div class="score-label">${option.label}</div>
+            <div class="score-value">${option.score}</div>
+        `;
+        button.addEventListener('click', () => selectRespiratory(option.score));
+        if (state.respiratoryScore === option.score) {
+            button.classList.add('selected');
+        }
+        grid.appendChild(button);
+    });
+}
+
+function selectRespiratory(score) {
+    state.respiratoryScore = state.respiratoryScore === score ? null : score;
+    renderRespiratoryGrid();
+    updateTotalScore();
+}
+
+function updateTotalScore() {
+    const behavior = state.behaviorScore || 0;
+    const cardiovascular = state.cardiovascularScore || 0;
+    const respiratory = state.respiratoryScore || 0;
+    const additional = state.additionalRisk ? 2 : 0;
+    const total = behavior + cardiovascular + respiratory + additional;
+
+    const display = document.getElementById('total-score-display');
+    const recommendation = getRecommendation(total);
+    const riskLevel = getRiskLevel(total);
+
+    display.className = `total-score ${riskLevel}`;
+    display.innerHTML = `
+        <div class="total-score-header">
+            ⚠ คะแนนรวม: <span class="total-score-number">${total}</span>
+        </div>
+        <div class="total-score-recommendation">${recommendation}</div>
+    `;
+
+    // Update nursing notes with recommendation based on score
+    document.getElementById('nursing-notes').value = recommendation;
+    state.nursingNotes = recommendation;
+}
+
+function getRiskLevel(score) {
+    if (score <= 1) return 'low';
+    if (score === 2) return 'medium';
+    if (score === 3) return 'orange';
+    return 'high';
+}
+
+function getRecommendation(score) {
+    if (score <= 1) return 'รับบริการตามปกติ';
+    if (score === 2) return 'ติดตาม และ ประเมินอาการ ทุก 1-2 ชั่วโมง';
+    if (score === 3) return 'ให้ผู้ป่วยได้รับการประเมินโดยแพทย์ ภายใน 30 นาที';
+    if (score >= 4) return 'ส่งต่อ ER';
+    return 'รับบริการตามปกติ';
+}
+
+function saveRecord(action) {
+    if (!state.ageGroup) {
+        document.getElementById('age-error').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        alert('กรุณาเลือกช่วงอายุผู้ป่วยก่อนทำการบันทึก');
+        return;
     }
+
+    const behavior = state.behaviorScore || 0;
+    const cardiovascular = state.cardiovascularScore || 0;
+    const respiratory = state.respiratoryScore || 0;
+    const additional = state.additionalRisk ? 2 : 0;
+    const total = behavior + cardiovascular + respiratory + additional;
+
+    const locationValue = state.location === 'อื่นๆ' 
+        ? `อื่นๆ: ${state.locationOther}` 
+        : state.location;
+
+    const transferValue = state.transferDestination === 'อื่นๆ'
+        ? `อื่นๆ: ${state.transferDestinationOther}`
+        : state.transferDestination;
+
+    // Get vital signs values from inputs
+    const tempValue = document.getElementById('temp-input').value || 'ไม่ระบุ';
+    const pulseValue = document.getElementById('pulse-input').value || 'ไม่ระบุ';
+    const rrVsValue = document.getElementById('rr-vs-input').value || 'ไม่ระบุ';
+    const bpValue = document.getElementById('bp-input').value || 'ไม่ระบุ';
+    const spo2Value = document.getElementById('spo2-input').value || 'ไม่ระบุ';
+
+    const record = {
+        id: Date.now().toString(),
+        hn: state.hn.trim() || 'ไม่ระบุ',
+        location: locationValue || 'ไม่ระบุ',
+        ageGroup: state.ageGroup,
+        behaviorScore: behavior,
+        cardiovascularScore: cardiovascular,
+        respiratoryScore: respiratory,
+        additionalRisk: state.additionalRisk,
+        totalScore: total,
+        nursingNotes: state.nursingNotes,
+        symptomsChanged: state.symptomsChanged,
+        action: action,
+        transferDestination: action === 'Transfer' ? transferValue : '',
+        prValue: state.prValue || 'ไม่ระบุ',
+        rrValue: state.rrValue || 'ไม่ระบุ',
+        temperature: tempValue,
+        pulse: pulseValue,
+        rrVitalSign: rrVsValue,
+        bloodPressure: bpValue,
+        spo2: spo2Value,
+        chdType: state.chdType || '',
+        palsEnabled: state.palsEnabled,
+        parentRecordId: state.parentRecordId,
+        isReassessment: state.isReassessment,
+        createdAt: new Date().toISOString()
+    };
+
+    state.records.unshift(record);
+    saveRecords();
+    renderRecords();
+    alert(`บันทึกสำเร็จ\nบันทึกข้อมูลผู้ป่วย HN: ${record.hn} เรียบร้อยแล้ว`);
+    resetForm();
 }
 
-/* Score Grid */
-.score-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1rem;
+function formatDateTime(isoString) {
+    const date = new Date(isoString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 }
 
-.score-button {
-    min-height: 120px;
-    border-radius: 0.75rem;
-    border: 2px solid #e5e7eb;
-    background: white;
-    padding: 1.25rem;
-    text-align: left;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.score-button::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(59, 130, 246, 0.1);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.score-button:active::before {
-    width: 400px;
-    height: 400px;
-}
-
-.score-button:hover {
-    border-color: #3b82f6;
-    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
-    transform: translateY(-4px) scale(1.02);
-}
-
-.score-button.selected {
-    border-color: #3b82f6;
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-    animation: selectPulse 0.5s ease-out;
-}
-
-.score-button.selected::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 0;
-    height: 0;
-    border-top: 40px solid #3b82f6;
-    border-left: 40px solid transparent;
-}
-
-.score-button.selected::after {
-    content: '✓';
-    position: absolute;
-    top: 0.35rem;
-    right: 0.5rem;
-    width: 20px;
-    height: 20px;
-    color: white;
-    font-size: 0.875rem;
-    font-weight: bold;
-    animation: checkmarkPop 0.3s ease-out, pulse 2s 0.3s infinite;
-}
-
-@keyframes selectPulse {
-    0%, 100% {
-        transform: scale(1);
+function renderRecords() {
+    const container = document.getElementById('records-list');
+    if (!state.records || state.records.length === 0) {
+        container.innerHTML = `
+            <div class="empty-records">
+                <div class="empty-icon">📋</div>
+                <p class="empty-title">ยังไม่มีประวัติการบันทึก</p>
+                <p class="empty-description">เมื่อคุณบันทึกข้อมูลผู้ป่วย ประวัติจะแสดงที่นี่</p>
+            </div>
+        `;
+        return;
     }
-    50% {
-        transform: scale(1.03);
+
+    container.innerHTML = state.records.map((record, index) => {
+        const ageGroup = ageGroups.find(a => a.id === record.ageGroup);
+        const ageText = ageGroup ? `${ageGroup.name} (${ageGroup.ageRange})` : 'ไม่ระบุ';
+        const isReassessment = record.isReassessment;
+        const parentRecord = isReassessment ? state.records.find(r => r.id === record.parentRecordId) : null;
+
+        let comparisonHTML = '';
+        if (isReassessment && parentRecord) {
+            comparisonHTML = `
+                <div class="comparison-container">
+                    <h4>📊 เปรียบเทียบผลการประเมิน</h4>
+                    <div class="comparison-grid">
+                        <div class="comparison-column">
+                            <div class="comparison-header">
+                                <span class="comparison-badge">1</span>
+                                <div>
+                                    <div class="comparison-title">ครั้งที่ 1</div>
+                                    <div class="comparison-time">${formatDateTime(parentRecord.createdAt)}</div>
+                                </div>
+                            </div>
+                            <div class="comparison-data">
+                                <div class="data-item">
+                                    <span class="data-label">คะแนนรวม</span>
+                                    <span class="data-value score-value">${parentRecord.totalScore}</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-label">Temp</span>
+                                    <span class="data-value">${parentRecord.temperature} °C</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-label">PR</span>
+                                    <span class="data-value">${parentRecord.pulse} bpm</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-label">RR</span>
+                                    <span class="data-value">${parentRecord.rrVitalSign} tpm</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-label">BP</span>
+                                    <span class="data-value">${parentRecord.bloodPressure}</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-label">SpO₂</span>
+                                    <span class="data-value">${parentRecord.spo2}%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="comparison-arrow">→</div>
+
+                        <div class="comparison-column highlight">
+                            <div class="comparison-header">
+                                <span class="comparison-badge">2</span>
+                                <div>
+                                    <div class="comparison-title">ครั้งที่ 2 (ประเมินซ้ำ)</div>
+                                    <div class="comparison-time">${formatDateTime(record.createdAt)}</div>
+                                </div>
+                            </div>
+                            <div class="comparison-data">
+                                <div class="data-item ${record.totalScore !== parentRecord.totalScore ? 'changed' : ''}">
+                                    <span class="data-label">คะแนนรวม</span>
+                                    <span class="data-value score-value">${record.totalScore}</span>
+                                </div>
+                                <div class="data-item ${record.temperature !== parentRecord.temperature ? 'changed' : ''}">
+                                    <span class="data-label">Temp</span>
+                                    <span class="data-value">${record.temperature} °C</span>
+                                </div>
+                                <div class="data-item ${record.pulse !== parentRecord.pulse ? 'changed' : ''}">
+                                    <span class="data-label">PR</span>
+                                    <span class="data-value">${record.pulse} bpm</span>
+                                </div>
+                                <div class="data-item ${record.rrVitalSign !== parentRecord.rrVitalSign ? 'changed' : ''}">
+                                    <span class="data-label">RR</span>
+                                    <span class="data-value">${record.rrVitalSign} tpm</span>
+                                </div>
+                                <div class="data-item ${record.bloodPressure !== parentRecord.bloodPressure ? 'changed' : ''}">
+                                    <span class="data-label">BP</span>
+                                    <span class="data-value">${record.bloodPressure}</span>
+                                </div>
+                                <div class="data-item ${record.spo2 !== parentRecord.spo2 ? 'changed' : ''}">
+                                    <span class="data-label">SpO₂</span>
+                                    <span class="data-value">${record.spo2}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        const riskLevel = getRiskLevel(record.totalScore);
+        const scoreColorClass = riskLevel === 'low' ? 'score-green' : 
+                                riskLevel === 'medium' ? 'score-yellow' : 
+                                riskLevel === 'orange' ? 'score-orange' : 'score-red';
+
+        return `
+            <div class="record-card">
+                <div class="record-header">
+                    <div>
+                        <strong>HN:</strong> ${record.hn}
+                        ${isReassessment ? '<span class="reassessment-badge">ประเมินซ้ำ</span>' : ''}
+                    </div>
+                    <div class="record-date">${formatDateTime(record.createdAt)}</div>
+                </div>
+
+                <div class="record-details">
+                    <div class="detail-row">
+                        <span class="detail-label">สถานที่:</span>
+                        <span>${record.location}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">ช่วงอายุ:</span>
+                        <span>${ageText}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">คะแนนรวม:</span>
+                        <span class="total-score-badge ${scoreColorClass}">${record.totalScore}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">การดำเนินการ:</span>
+                        <span class="action-badge">${record.action}</span>
+                    </div>
+                    ${record.action === 'Transfer' && record.transferDestination ? `
+                    <div class="detail-row">
+                        <span class="detail-label">ส่งต่อไปที่:</span>
+                        <span class="transfer-badge">${record.transferDestination}</span>
+                    </div>
+                    ` : ''}
+                    ${record.chdType ? `
+                    <div class="detail-row">
+                        <span class="detail-label">CHD:</span>
+                        <span class="chd-badge">${record.chdType === 'acyanotic' ? '💙 Acyanotic CHD' : '💜 Cyanotic CHD'}</span>
+                    </div>
+                    ` : ''}
+                    ${record.palsEnabled ? `
+                    <div class="detail-row">
+                        <span class="detail-label">PALS:</span>
+                        <span class="pals-badge">PALS</span>
+                    </div>
+                    ` : ''}
+                </div>
+
+                <div class="vital-signs-summary">
+                    <h4>📊 สัญญาณชีพที่ประเมิน</h4>
+                    <div class="vital-signs-summary-grid">
+                        <div class="vital-summary-item">
+                            <span class="vital-summary-label">Temp:</span>
+                            <span class="vital-summary-value">${record.temperature} °C</span>
+                        </div>
+                        <div class="vital-summary-item">
+                            <span class="vital-summary-label">PR:</span>
+                            <span class="vital-summary-value">${record.pulse} bpm</span>
+                        </div>
+                        <div class="vital-summary-item">
+                            <span class="vital-summary-label">RR:</span>
+                            <span class="vital-summary-value">${record.rrVitalSign} tpm</span>
+                        </div>
+                        <div class="vital-summary-item">
+                            <span class="vital-summary-label">BP:</span>
+                            <span class="vital-summary-value">${record.bloodPressure} mmHg</span>
+                        </div>
+                        <div class="vital-summary-item">
+                            <span class="vital-summary-label">SpO₂:</span>
+                            <span class="vital-summary-value">${record.spo2}%</span>
+                        </div>
+                    </div>
+                </div>
+
+                ${comparisonHTML}
+
+                <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                    ${!isReassessment ? `
+                        <button class="reassess-btn" onclick="startReassessment('${record.id}')">
+                            🔄 ประเมินซ้ำ
+                        </button>
+                    ` : ''}
+                    <button class="delete-btn" onclick="deleteRecord('${record.id}')">
+                        🗑️ ลบ
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function startReassessment(recordId) {
+    const record = state.records.find(r => r.id === recordId);
+    if (!record) {
+        alert('ไม่พบข้อมูลการบันทึก');
+        return;
     }
-}
 
-@keyframes checkmarkPop {
-    0% {
-        transform: scale(0) rotate(-45deg);
-        opacity: 0;
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Set reassessment state
+    state.parentRecordId = recordId;
+    state.isReassessment = true;
+
+    // Pre-fill form with previous data
+    state.hn = record.hn;
+    state.location = record.location;
+    state.ageGroup = record.ageGroup;
+
+    document.getElementById('hn-input-top').value = record.hn;
+    document.getElementById('location-select').value = record.location === 'อื่นๆ' ? record.location : (record.location || '');
+
+    // Select age group
+    selectAge(record.ageGroup);
+
+    // Show reassessment indicator
+    const formTitle = document.querySelector('h1');
+    if (formTitle && !formTitle.innerHTML.includes('ประเมินซ้ำ')) {
+        formTitle.innerHTML = formTitle.innerHTML + ' <span style="background: #fbbf24; color: white; padding: 0.25rem 0.75rem; border-radius: 0.5rem; margin-left: 0.5rem; font-size: 1rem;">กำลังประเมินซ้ำ</span>';
     }
-    50% {
-        transform: scale(1.2) rotate(5deg);
+
+    alert(`กำลังประเมินซ้ำสำหรับ HN: ${record.hn}\nกรุณากรอกข้อมูลใหม่และบันทึก`);
+}
+
+function resetForm() {
+    state.ageGroup = null;
+    state.behaviorScore = null;
+    state.cardiovascularScore = null;
+    state.respiratoryScore = null;
+    state.additionalRisk = false;
+    state.hn = '';
+    state.location = '';
+    state.locationOther = '';
+    state.nursingNotes = '';
+    state.symptomsChanged = 'no';
+    state.transferDestination = '';
+    state.transferDestinationOther = '';
+    state.prValue = '';
+    state.rrValue = '';
+    state.temperature = '';
+    state.pulse = '';
+    state.rrVitalSign = '';
+    state.bloodPressure = '';
+    state.spo2 = '';
+    state.chdType = '';
+    state.palsEnabled = false;
+    state.parentRecordId = null;
+    state.isReassessment = false;
+
+    document.getElementById('hn-input-top').value = '';
+    document.getElementById('location-select').value = '';
+    document.getElementById('location-other').value = '';
+    document.getElementById('location-other').style.display = 'none';
+    document.getElementById('nursing-notes').value = '';
+    document.getElementById('transfer-destination-select').value = '';
+    document.getElementById('transfer-destination-other').value = '';
+    document.getElementById('transfer-destination-other').style.display = 'none';
+    document.getElementById('transfer-destination-section').style.display = 'none';
+    document.getElementById('additional-risk').checked = false;
+    document.getElementById('age-error').style.display = 'none';
+
+    // Clear reassessment indicator from title
+    const formTitle = document.querySelector('h1');
+    if (formTitle) {
+        formTitle.innerHTML = formTitle.innerHTML.replace(/<span style="background: #fbbf24.*?<\/span>/, '');
     }
-    100% {
-        transform: scale(1) rotate(0deg);
-        opacity: 1;
+
+    // Reset PR and RR inputs
+    const prInput = document.getElementById('pr-input');
+    const rrInput = document.getElementById('rr-input');
+    if (prInput) prInput.value = '';
+    if (rrInput) rrInput.value = '';
+
+    // Reset vital signs inputs
+    document.getElementById('temp-input').value = '';
+    document.getElementById('pulse-input').value = '';
+    document.getElementById('rr-vs-input').value = '';
+    document.getElementById('bp-input').value = '';
+    document.getElementById('spo2-input').value = '';
+
+    // Hide CHD selected
+    document.getElementById('chd-selected').style.display = 'none';
+
+    // Reset PALS button
+    const palsBtn = document.getElementById('pals-btn');
+    if (palsBtn) {
+        palsBtn.classList.remove('active');
     }
-}
 
-.score-label {
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: #1f2937;
-    margin-bottom: 0.75rem;
-    line-height: 1.4;
-    padding-right: 1rem;
-}
+    // Hide vital signs input containers
+    const prContainer = document.getElementById('pr-input-container');
+    const rrContainer = document.getElementById('rr-input-container');
+    if (prContainer) prContainer.style.display = 'none';
+    if (rrContainer) rrContainer.style.display = 'none';
 
-.score-value {
-    font-size: 1.75rem;
-    font-weight: bold;
-    color: #2563eb;
-}
-
-/* Checkbox */
-.checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    padding: 1.25rem;
-
-/* Vital Signs Summary in Records */
-.vital-signs-summary {
-    margin-top: 1rem;
-    padding: 0.75rem 1rem;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.375rem;
-}
-
-.vital-signs-summary h4 {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #4b5563;
-    margin-bottom: 0.5rem;
-}
-
-.vital-signs-summary-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    font-size: 0.875rem;
-}
-
-.vital-summary-item {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 0.25rem;
-    white-space: nowrap;
-}
-
-.vital-summary-label {
-    font-weight: 600;
-    color: #6b7280;
-}
-
-.vital-summary-value {
-    font-weight: 500;
-    color: #1f2937;
-}
-
-
-    background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
-    border: 2px solid #fdba74;
-    border-radius: 0.75rem;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.checkbox-label:hover {
-    background: #fef3c7;
-    border-color: #fb923c;
-    box-shadow: 0 4px 12px rgba(251, 146, 60, 0.2);
-}
-
-.checkbox-label input[type="checkbox"] {
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-}
-
-.checkbox-label span:first-of-type {
-    flex: 1;
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: #1f2937;
-}
-
-.score-badge {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #f97316;
-}
-
-/* Total Score */
-.total-score {
-    padding: 1.75rem;
-    border-radius: 0.75rem;
-    border: 2px solid;
-    margin-bottom: 2rem;
-    transition: all 0.3s;
-    animation: scoreSlideIn 0.5s ease-out;
-}
-
-.total-score.low {
-    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-    border-color: #86efac;
-    color: #14532d;
-}
-
-.total-score.medium {
-    background: linear-gradient(135deg, #fef9c3 0%, #fef08a 100%);
-    border-color: #fde047;
-    color: #713f12;
-}
-
-.total-score.orange {
-    background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
-    border-color: #fb923c;
-    color: #7c2d12;
-}
-
-.total-score.high {
-    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-    border-color: #fca5a5;
-    color: #7f1d1d;
-    animation: scoreSlideIn 0.5s ease-out, highScorePulse 2s infinite;
-}
-
-.total-score-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-.total-score-number {
-    font-size: 2rem;
-    animation: numberBounce 0.6s ease-out;
-}
-
-.total-score-recommendation {
-    font-size: 1.125rem;
-    font-weight: 600;
-    animation: fadeInUp 0.6s ease-out;
-}
-
-@keyframes scoreSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
+    // Reset headers to default text
+    const cardioHeader = document.querySelector('#cardiovascular-section .section-header h2');
+    if (cardioHeader) {
+        cardioHeader.innerHTML = 'ระบบไหลเวียนโลหิต';
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+
+    const respHeader = document.querySelector('#respiratory-section .section-header h2');
+    if (respHeader) {
+        respHeader.innerHTML = 'ระบบทางเดินหายใจ';
     }
+
+    document.querySelectorAll('.symptom-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.value === 'no');
+    });
+
+    document.querySelectorAll('.age-button').forEach(btn => btn.classList.remove('selected'));
+    document.querySelectorAll('.score-button').forEach(btn => btn.classList.remove('selected'));
+
+    updateTotalScore();
 }
 
-@keyframes numberBounce {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.2);
-    }
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes highScorePulse {
-    0%, 100% {
-        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
-    }
-    50% {
-        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
-    }
-}
-
-/* Patient Form */
-.patient-form {
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 2px solid #e5e7eb;
-}
-
-.patient-form h3 {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: #1f2937;
-    margin-bottom: 1.5rem;
-}
-
-.symptoms-buttons {
-    display: flex;
-    gap: 1rem;
-}
-
-.symptom-btn {
-    flex: 1;
-    padding: 1.25rem 1.5rem;
-    border: 2px solid #d1d5db;
-    border-radius: 0.5rem;
-    background: white;
-    font-weight: 600;
-    font-size: 1.125rem;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.symptom-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.symptom-btn:active::before {
-    width: 300px;
-    height: 300px;
-}
-
-.symptom-btn:hover {
-    border-color: #9ca3af;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transform: translateY(-2px) scale(1.03);
-}
-
-.symptom-btn.active[data-value="yes"] {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    border-color: #dc2626;
-    color: white;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-    animation: symptomSelect 0.4s ease-out;
-}
-
-.symptom-btn.active[data-value="no"] {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    border-color: #059669;
-    color: white;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-    animation: symptomSelect 0.4s ease-out;
-}
-
-@keyframes symptomSelect {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-.action-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.action-btn {
-    flex: 1;
-    min-width: 140px;
-    padding: 1.5rem 1.75rem;
-    border: none;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: white;
-    position: relative;
-    overflow: hidden;
-}
-
-.action-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.action-btn:active::before {
-    width: 300px;
-    height: 300px;
-}
-
-.btn-transfer {
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-    color: white;
-}
-
-.btn-transfer:hover {
-    background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
-    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3);
-    transform: translateY(-4px) scale(1.05);
-}
-
-.btn-transfer:active {
-    transform: translateY(-2px) scale(1.02);
-}
-
-.btn-reset {
-    background: white;
-    color: #1f2937;
-    border: 2px solid #d1d5db;
-}
-
-.btn-reset:hover {
-    border-color: #9ca3af;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transform: translateY(-2px) scale(1.05);
-}
-
-.btn-reset:active {
-    transform: translateY(-1px) scale(1.02);
-}
-
-/* Records History */
-.records-history {
-    margin-top: 2rem;
-}
-
-.records-history h3 {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: #1f2937;
-    margin-bottom: 1.5rem;
-}
-
-.record-card {
-    background: white;
-    border: 2px solid #e5e7eb;
-    border-radius: 1rem;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    transition: all 0.3s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.record-card:hover {
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-    transform: translateY(-2px);
-    border-color: #cbd5e1;
-}
-
-.record-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.25rem;
-    border-bottom: 3px solid #f3f4f6;
-    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-    padding: 1.25rem;
-    border-radius: 0.5rem;
-    margin: -0.5rem -0.5rem 1.5rem -0.5rem;
-}
-
-.record-header > div:first-child {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: #1f2937;
-}
-
-.record-date {
-    font-size: 0.875rem;
-    color: #6b7280;
-    font-weight: 600;
-    background: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid #e5e7eb;
-}
-
-.record-details {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.detail-row {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    padding: 0.75rem;
-    background: #f9fafb;
-    border-radius: 0.5rem;
-    border-left: 3px solid #e5e7eb;
-    transition: all 0.2s;
-}
-
-.detail-row:hover {
-    background: #f3f4f6;
-    border-left-color: #3b82f6;
-}
-
-.detail-label {
-    font-weight: 700;
-    color: #374151;
-    min-width: 100px;
-    font-size: 0.875rem;
-}
-
-.total-score-badge {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-}
-
-.total-score-badge.score-green {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-}
-
-.total-score-badge.score-yellow {
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-}
-
-.total-score-badge.score-orange {
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-}
-
-.total-score-badge.score-red {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-}
-
-.action-badge {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-}
-
-.transfer-badge {
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    font-size: 0.875rem;
-}
-
-/* CHD Button */
-.chd-button {
-    padding: 0.75rem 1.25rem;
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-size: 0.875rem;
-}
-
-.chd-button:hover {
-    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
-    transform: translateY(-2px);
-}
-
-/* PALS Button */
-.pals-button {
-    padding: 0.75rem 1.25rem;
-    background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-size: 0.875rem;
-}
-
-.pals-button:hover {
-    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-    box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
-    transform: translateY(-2px);
-}
-
-.pals-button.active {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-    transform: scale(1.05);
-}
-
-.pals-badge {
-    background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    font-size: 0.875rem;
-}
-
-.chd-selected {
-    padding: 1rem;
-    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
-    border: 2px solid #c4b5fd;
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-    animation: slideDown 0.3s ease-out;
-}
-
-.chd-badge {
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    font-size: 0.875rem;
-}
-
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
+function deleteRecord(id) {
+    if (confirm('ต้องการลบรายการนี้หรือไม่?')) {
+        state.records = state.records.filter(r => r.id !== id);
+        saveRecords();
+        renderRecords();
+        alert('ลบสำเร็จ');
     }
 }
 
-.modal-content {
-    background: white;
-    border-radius: 1rem;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    max-width: 500px;
-    width: 90%;
-    animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-    from {
-        transform: translateY(50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
+function loadRecords() {
+    const saved = localStorage.getItem('pewsRecords');
+    if (saved) {
+        try {
+            state.records = JSON.parse(saved);
+        } catch (e) {
+            console.error('Error loading records:', e);
+        }
     }
 }
 
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem;
-    border-bottom: 2px solid #e5e7eb;
-}
-
-.modal-header h2 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #1f2937;
-    margin: 0;
-}
-
-.modal-close {
-    background: none;
-    border: none;
-    font-size: 2rem;
-    color: #6b7280;
-    cursor: pointer;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.5rem;
-    transition: all 0.2s;
-}
-
-.modal-close:hover {
-    background: #f3f4f6;
-    color: #1f2937;
-}
-
-.modal-body {
-    padding: 1.5rem;
-}
-
-.chd-options {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.chd-option-btn {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.5rem;
-    background: white;
-    border: 2px solid #e5e7eb;
-    border-radius: 0.75rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-size: 1rem;
-}
-
-.chd-option-btn:hover {
-    border-color: #8b5cf6;
-    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
-    transform: translateY(-2px);
-}
-
-.chd-icon {
-    font-size: 2rem;
-}
-
-.chd-text {
-    font-weight: 600;
-    color: #1f2937;
-}
-
-.empty-records {
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    border: 2px solid #93c5fd;
-    border-radius: 0.75rem;
-    padding: 2rem;
-    text-align: center;
-}
-
-.empty-icon {
-    font-size: 4rem;
-    color: #3b82f6;
-    opacity: 0.5;
-    margin-bottom: 1rem;
-}
-
-.empty-title {
-    color: #1e3a8a;
-    font-weight: 500;
-    font-size: 1.125rem;
-    margin-bottom: 0.5rem;
-}
-
-.empty-description {
-    color: #4b5563;
-    font-size: 0.875rem;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.5;
-    }
-}
-
-/* Comparison Grid */
-.comparison-container {
-    margin-top: 1.5rem;
-    padding: 1.5rem;
-    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-    border: 2px solid #7dd3fc;
-    border-radius: 1rem;
-    animation: slideDown 0.4s ease-out;
-}
-
-.comparison-container h4 {
-    font-size: 1.125rem;
-    font-weight: bold;
-    color: #0c4a6e;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.comparison-grid {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 1.5rem;
-    align-items: start;
-}
-
-.comparison-column {
-    background: white;
-    border-radius: 0.75rem;
-    padding: 1.25rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s;
-}
-
-.comparison-column.highlight {
-    background: linear-gradient(135deg, #fef3c7 0%, #fef08a 100%);
-    border: 2px solid #fbbf24;
-}
-
-.comparison-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #e5e7eb;
-}
-
-.comparison-badge {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 0.875rem;
-}
-
-.comparison-title {
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: #1f2937;
-}
-
-.comparison-time {
-    font-size: 0.75rem;
-    color: #6b7280;
-    margin-top: 0.25rem;
-}
-
-.comparison-data {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.data-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.625rem;
-    border-radius: 0.5rem;
-    background: #f9fafb;
-    transition: all 0.2s;
-}
-
-.data-item.changed {
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-    border-left: 4px solid #f59e0b;
-    font-weight: 600;
-    animation: highlightPulse 1s ease-out;
-}
-
-.data-label {
-    font-size: 0.875rem;
-    color: #6b7280;
-    font-weight: 500;
-}
-
-.data-value {
-    font-size: 0.875rem;
-    color: #1f2937;
-    font-weight: 600;
-}
-
-.data-value.score-value {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.375rem;
-    font-size: 1rem;
-}
-
-.comparison-arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    color: #3b82f6;
-    font-weight: bold;
-    animation: arrowBounce 2s infinite;
-}
-
-@keyframes highlightPulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.02);
-    }
-}
-
-@keyframes arrowBounce {
-    0%, 100% {
-        transform: translateX(0);
-    }
-    50% {
-        transform: translateX(5px);
-    }
-}
-
-.reassessment-badge {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.375rem;
-    margin-left: 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
-    animation: badgePulse 2s infinite;
-}
-
-@keyframes badgePulse {
-    0%, 100% {
-        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
-    }
-    50% {
-        box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
-    }
-}
-
-.reassess-btn {
-    padding: 0.75rem 1.5rem;
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-size: 0.95rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.reassess-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.reassess-btn:active::before {
-    width: 300px;
-    height: 300px;
-}
-
-.reassess-btn:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
-}
-
-.delete-btn {
-    padding: 0.75rem 1.5rem;
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-size: 0.95rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.delete-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.delete-btn:active::before {
-    width: 300px;
-    height: 300px;
-}
-
-.delete-btn:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-}
-
-@media (max-width: 768px) {
-    .age-grid,
-    .score-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .action-buttons {
-        flex-direction: column;
-    }
-
-    .action-btn {
-        width: 100%;
-    }
-
-    .vital-input-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .vital-input-container input[type="number"] {
-        width: 100%;
-    }
-
-    .vital-signs-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .comparison-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .comparison-arrow {
-        transform: rotate(90deg);
-        margin: 0.5rem 0;
-    }
-
-    .comparison-column {
-        padding: 1rem;
-    }
-
-    .data-item {
-        padding: 0.5rem;
-    }
+function saveRecords() {
+    localStorage.setItem('pewsRecords', JSON.stringify(state.records));
 }
