@@ -76,6 +76,7 @@ let state = {
     parentRecordId: null,
     isReassessment: false,
     chdType: '',
+    palsEnabled: false,
     records: []
 };
 
@@ -202,11 +203,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     document.querySelector('.btn-reset').addEventListener('click', resetForm);
 
-    // PALS button handler - scroll to records history
+    // PALS button handler - toggle on/off
     document.getElementById('pals-btn').addEventListener('click', () => {
-        const recordsSection = document.querySelector('.records-history');
-        if (recordsSection) {
-            recordsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        state.palsEnabled = !state.palsEnabled;
+        const palsBtn = document.getElementById('pals-btn');
+        
+        if (state.palsEnabled) {
+            palsBtn.classList.add('active');
+        } else {
+            palsBtn.classList.remove('active');
         }
     });
 
@@ -533,6 +538,7 @@ function saveRecord(action) {
         bloodPressure: bpValue,
         spo2: spo2Value,
         chdType: state.chdType || '',
+        palsEnabled: state.palsEnabled,
         parentRecordId: state.parentRecordId,
         isReassessment: state.isReassessment,
         createdAt: new Date().toISOString()
@@ -699,7 +705,13 @@ function renderRecords() {
                     ${record.chdType ? `
                     <div class="detail-row">
                         <span class="detail-label">CHD:</span>
-                        <span class="chd-badge">${record.chdType === 'acyanotic' ? ' Acyanotic CHD' : ' Cyanotic CHD'}</span>
+                        <span class="chd-badge">${record.chdType === 'acyanotic' ? '💙 Acyanotic CHD' : '💜 Cyanotic CHD'}</span>
+                    </div>
+                    ` : ''}
+                    ${record.palsEnabled ? `
+                    <div class="detail-row">
+                        <span class="detail-label">PALS:</span>
+                        <span class="pals-badge">PALS</span>
                     </div>
                     ` : ''}
                 </div>
@@ -802,6 +814,7 @@ function resetForm() {
     state.bloodPressure = '';
     state.spo2 = '';
     state.chdType = '';
+    state.palsEnabled = false;
     state.parentRecordId = null;
     state.isReassessment = false;
 
@@ -838,6 +851,12 @@ function resetForm() {
 
     // Hide CHD selected
     document.getElementById('chd-selected').style.display = 'none';
+
+    // Reset PALS button
+    const palsBtn = document.getElementById('pals-btn');
+    if (palsBtn) {
+        palsBtn.classList.remove('active');
+    }
 
     // Hide vital signs input containers
     const prContainer = document.getElementById('pr-input-container');
