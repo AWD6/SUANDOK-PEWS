@@ -202,6 +202,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     document.querySelector('.btn-reset').addEventListener('click', resetForm);
 
+    // PALS button handler - scroll to records history
+    document.getElementById('pals-btn').addEventListener('click', () => {
+        const recordsSection = document.querySelector('.records-history');
+        if (recordsSection) {
+            recordsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+
     // CHD Modal handlers
     document.getElementById('chd-btn').addEventListener('click', () => {
         document.getElementById('chd-modal').style.display = 'flex';
