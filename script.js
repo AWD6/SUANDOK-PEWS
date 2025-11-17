@@ -204,16 +204,17 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('.btn-reset').addEventListener('click', resetForm);
 
     // PALS button handler - toggle on/off
-    document.getElementById('pals-btn').addEventListener('click', () => {
-        state.palsEnabled = !state.palsEnabled;
-        const palsBtn = document.getElementById('pals-btn');
-
-        if (state.palsEnabled) {
-            palsBtn.classList.add('active');
-        } else {
-            palsBtn.classList.remove('active');
-        }
-    });
+    const palsBtn = document.getElementById('pals-button');
+    if (palsBtn) {
+        palsBtn.addEventListener('click', () => {
+            state.palsEnabled = !state.palsEnabled;
+            if (state.palsEnabled) {
+                palsBtn.classList.add('active');
+            } else {
+                palsBtn.classList.remove('active');
+            }
+        });
+    }
 
     // CHD Modal handlers
     document.getElementById('chd-btn').addEventListener('click', () => {
