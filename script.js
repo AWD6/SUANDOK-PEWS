@@ -1,4 +1,3 @@
-
 // Age groups data
 const ageGroups = [
     {
@@ -214,16 +213,16 @@ function setupEventListeners() {
         card.addEventListener('click', () => {
             const category = card.dataset.category;
             const score = parseInt(card.dataset.score);
-            
+
             document.querySelectorAll(`.score-card[data-category="${category}"]`).forEach(c => {
                 c.classList.remove('selected');
             });
             card.classList.add('selected');
-            
+
             if (category === 'behavior') state.behaviorScore = score;
             if (category === 'cardiovascular') state.cardiovascularScore = score;
             if (category === 'respiratory') state.respiratoryScore = score;
-            
+
             updateTotalScore();
         });
     });
@@ -256,22 +255,21 @@ function setupEventListeners() {
 
 // Update total score
 function updateTotalScore() {
-    let total = 0;
-    
-    if (state.behaviorScore !== null) total += state.behaviorScore;
-    if (state.cardiovascularScore !== null) total += state.cardiovascularScore;
-    if (state.respiratoryScore !== null) total += state.respiratoryScore;
-    if (state.additionalRisk) total += 2;
-    if (state.palsEnabled) total += 2;
-    
+    const behavior = state.behaviorScore || 0;
+    const cardiovascular = state.cardiovascularScore || 0;
+    const respiratory = state.respiratoryScore || 0;
+    const additional = state.additionalRisk ? 2 : 0;
+    const pals = state.palsEnabled ? 2 : 0;
+    const total = behavior + cardiovascular + respiratory + additional + pals;
+
     state.totalScore = total;
-    
+
     const scoreDisplay = document.getElementById('total-score-display');
     const scoreValue = document.getElementById('score-value');
     const riskLevel = document.getElementById('risk-level');
-    
+
     scoreValue.textContent = total;
-    
+
     scoreDisplay.classList.remove('low', 'medium', 'high');
     if (total <= 2) {
         scoreDisplay.classList.add('low');
@@ -291,33 +289,33 @@ async function submitRecord() {
         timestamp: new Date().toISOString(),
         ...state
     };
-    
+
     // Save to localStorage
     const records = JSON.parse(localStorage.getItem('pewsRecords') || '[]');
     records.unshift(record);
     localStorage.setItem('pewsRecords', JSON.stringify(records));
-    
+
     // Submit to Google Form
     try {
         const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScfBir96VFdMNbhFrTx294HIbHky2YBxHs2bzWPn2WCI4krNQ/formResponse';
         const formData = new URLSearchParams();
-        
+
         // Field 1: HN
         formData.append('entry.1151417469', state.hn || '-');
-        
+
         // Field 2: Combined data
         const locationValue = state.location === 'อื่นๆ' ? state.locationOther || state.location : state.location;
         const allDataParts = [];
         allDataParts.push(`Location: ${locationValue}`);
-        
+
         if (state.selectedAge) {
             const ageGroup = ageGroups.find(a => a.id === state.selectedAge);
             allDataParts.push(`Age Group: ${ageGroup.name}`);
         }
-        
+
         allDataParts.push(`Total PEWS Score: ${state.totalScore}`);
         allDataParts.push(`PALS: ${state.palsEnabled ? 'Enabled' : 'Disabled'}`);
-        
+
         const vitals = [];
         if (state.temperature) vitals.push(`Temp: ${state.temperature}C`);
         if (state.pulse) vitals.push(`PR: ${state.pulse}`);
@@ -327,7 +325,7 @@ async function submitRecord() {
         if (vitals.length > 0) {
             allDataParts.push(`Vital Signs: ${vitals.join(', ')}`);
         }
-        
+
         const scores = [];
         if (state.behaviorScore !== null) scores.push(`Behavior: ${state.behaviorScore}`);
         if (state.cardiovascularScore !== null) scores.push(`Cardio: ${state.cardiovascularScore}`);
@@ -335,14 +333,14 @@ async function submitRecord() {
         if (scores.length > 0) {
             allDataParts.push(`Component Scores: ${scores.join(', ')}`);
         }
-        
+
         if (state.additionalRisk) allDataParts.push('Additional Risk: Yes');
         if (state.chdType) allDataParts.push(`CHD Type: ${state.chdType === 'acyanotic' ? 'Acyanotic' : 'Cyanotic'}`);
         if (state.nursingNotes) allDataParts.push(`Nursing Notes: ${state.nursingNotes}`);
         if (state.transferDestination) allDataParts.push(`Transfer Destination: ${state.transferDestination}`);
-        
+
         formData.append('entry.876819797', allDataParts.join(' | '));
-        
+
         await fetch(formUrl, {
             method: 'POST',
             mode: 'no-cors',
@@ -351,13 +349,13 @@ async function submitRecord() {
             },
             body: formData.toString()
         });
-        
+
         alert('บันทึกข้อมูลสำเร็จ!');
     } catch (error) {
         console.error('Error submitting to Google Form:', error);
         alert('บันทึกข้อมูลในเครื่องสำเร็จ (ไม่สามารถส่งไป Google Form ได้)');
     }
-    
+
     loadRecords();
     resetForm();
 }
@@ -367,17 +365,17 @@ function loadRecords() {
     const records = JSON.parse(localStorage.getItem('pewsRecords') || '[]');
     const recordsList = document.getElementById('records-list');
     const recordsSection = document.getElementById('records-section');
-    
+
     if (records.length === 0) {
         recordsSection.style.display = 'none';
         return;
     }
-    
+
     recordsSection.style.display = 'block';
     recordsList.innerHTML = records.slice(0, 10).map(record => {
         const date = new Date(record.timestamp);
         const timeStr = date.toLocaleString('th-TH');
-        
+
         return `
             <div class="record-card">
                 <div class="record-header">
@@ -441,7 +439,7 @@ function resetForm() {
         transferDestination: '',
         totalScore: 0
     };
-    
+
     document.getElementById('hn-input').value = '';
     document.getElementById('location-input').value = '';
     document.getElementById('location-other').value = '';
@@ -455,9 +453,13 @@ function resetForm() {
     document.getElementById('spo2').value = '';
     document.querySelectorAll('.score-card').forEach(c => c.classList.remove('selected'));
     document.getElementById('additional-risk').checked = false;
-    document.getElementById('pals-button').classList.remove('active');
+    // Reset PALS button
+    const palsBtn = document.getElementById('pals-button');
+    if (palsBtn) {
+        palsBtn.classList.remove('active');
+    }
     document.getElementById('nursing-notes').value = '';
     document.getElementById('transfer-destination').value = '';
-    
+
     updateTotalScore();
 }
