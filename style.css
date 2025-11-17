@@ -1104,6 +1104,42 @@ body {
     font-size: 0.875rem;
 }
 
+/* PALS Button */
+.pals-button {
+    padding: 0.625rem 1.5rem;
+    background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%);
+    color: white;
+    border: 2px solid #9ca3af;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.875rem;
+    margin-left: 0.5rem;
+}
+
+.pals-button:hover {
+    background: linear-gradient(135deg, #b0b0b0 0%, #989898 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.pals-button.active {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border-color: #1d4ed8;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+    transform: scale(1.02);
+}
+
+.pals-badge {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
 @keyframes pulse {
     0%, 100% {
         opacity: 1;
