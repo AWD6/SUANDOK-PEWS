@@ -1,301 +1,140 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>SUANDOK PEWS - Pediatric Early Warning Signs</title>
-        <link rel="stylesheet" href="style.css" />
-    </head>
-    <body>
-        <div class="container">
-            <header class="header">
-                <h1>SUANDOK PEWS</h1>
-                <p>Pediatric Early Warning Signs</p>
-            </header>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUANDOK PEWS - Pediatric Early Warning Signs</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>SUANDOK PEWS</h1>
+            <p>Pediatric Early Warning Signs</p>
+        </header>
 
-            <main class="main-card">
-                <div class="form-section">
-                    <label for="hn-input-top">เลข HN ผู้ป่วย</label>
-                    <input
-                        type="text"
-                        id="hn-input-top"
-                        placeholder="กรอกเลข HN (ไม่บังคับ)"
-                    />
+        <main class="main-card">
+            <div class="form-section">
+                <label for="hn-input">เลข HN ผู้ป่วย</label>
+                <input type="text" id="hn-input" placeholder="กรอกเลข HN (ไม่บังคับ)">
+            </div>
+
+            <div class="form-section">
+                <label for="location-input">Location</label>
+                <select id="location-input">
+                    <option value="">เลือก Location</option>
+                    <option value="Ward">Ward</option>
+                    <option value="ICU">ICU</option>
+                    <option value="ER">ER</option>
+                    <option value="OR">OR</option>
+                    <option value="อื่นๆ">อื่นๆ</option>
+                </select>
+                <input type="text" id="location-other" placeholder="ระบุ Location อื่นๆ" style="display:none; margin-top: 10px;">
+            </div>
+
+            <div class="form-section">
+                <h3>เลือกกลุ่มอายุ (Age Group)</h3>
+                <div class="age-group-grid" id="age-group-grid"></div>
+            </div>
+
+            <div class="form-section">
+                <h3>📊 สัญญาณชีพ (Vital Signs)</h3>
+                <div class="vital-signs-header">
+                    <button type="button" id="chd-button" class="chd-button">Congenital heart disease</button>
                 </div>
-
-                <div class="form-section">
-                    <label for="location-select">Location การประเมิน</label>
-                    <select id="location-select" class="location-select">
-                        <option value="">-- เลือกสถานที่ --</option>
-                        <option value="จุด Triage">จุด Triage</option>
-                        <option value="ER">ER</option>
-                        <option value="OPD 27">OPD 27</option>
-                        <option value="OPD 28">OPD 28</option>
-                        <option value="OPD 29">OPD 29</option>
-                        <option value="EID">EID</option>
-                        <option value="อื่นๆ">อื่นๆ</option>
-                    </select>
-                    <input
-                        type="text"
-                        id="location-other"
-                        placeholder="กรุณาระบุสถานที่"
-                        style="display: none; margin-top: 0.5rem"
-                    />
+                <div id="chd-selected" class="chd-selected" style="display:none;">
+                    <span id="chd-type-display"></span>
+                    <button type="button" id="chd-clear" class="chd-clear-btn">ยกเลิก</button>
                 </div>
-
-                <section class="scoring-section">
-                    <div class="section-header">
-                        <div class="badge badge-purple">0</div>
-                        <h2>ช่วงอายุผู้ป่วย <span class="required">*</span></h2>
+                <div class="vital-signs-grid">
+                    <div class="vital-input">
+                        <label for="temp">Temp (°C)</label>
+                        <input type="number" id="temp" step="0.1" min="30" max="45" placeholder="°C">
                     </div>
-                    <div
-                        id="age-error"
-                        class="error-message"
-                        style="display: none"
-                    >
-                        กรุณาเลือกช่วงอายุผู้ป่วยก่อนทำการบันทึก
+                    <div class="vital-input">
+                        <label for="pulse">PR (bpm)</label>
+                        <input type="number" id="pulse" min="0" max="300" placeholder="bpm">
                     </div>
-                    <div class="age-grid" id="age-grid"></div>
-                </section>
-
-                <section class="scoring-section">
-                    <div class="section-header">
-                        <div class="badge badge-blue">1</div>
-                        <h2>พฤติกรรม</h2>
+                    <div class="vital-input">
+                        <label for="rr">RR (tpm)</label>
+                        <input type="number" id="rr" min="0" max="200" placeholder="tpm">
                     </div>
-                    <div class="score-grid" id="behavior-grid"></div>
-                </section>
-
-                <section class="scoring-section" id="cardiovascular-section">
-                    <div class="section-header">
-                        <div class="badge badge-red">2</div>
-                        <h2>ระบบไหลเวียนโลหิต</h2>
+                    <div class="vital-input">
+                        <label for="bp">BP (mmHg)</label>
+                        <input type="text" id="bp" maxlength="7" placeholder="mmHg">
                     </div>
-                    <div
-                        id="cardiovascular-warning"
-                        class="warning-message"
-                        style="display: none"
-                    >
-                        กรุณาเลือกช่วงอายุเพื่อดูเกณฑ์การประเมินที่เหมาะสม
-                    </div>
-                    <div
-                        id="pr-input-container"
-                        class="vital-input-container"
-                        style="display: none"
-                    >
-                        <label for="pr-input">กรอก PR (ชีพจร):</label>
-                        <input
-                            type="number"
-                            id="pr-input"
-                            placeholder="ครั้ง/นาที"
-                            min="0"
-                            max="300"
-                        />
-                        <span class="unit-text">ครั้ง/นาที</span>
-                    </div>
-                    <div class="score-grid" id="cardiovascular-grid"></div>
-                </section>
-
-                <section class="scoring-section" id="respiratory-section">
-                    <div class="section-header">
-                        <div class="badge badge-purple-2">3</div>
-                        <h2>ระบบทางเดินหายใจ</h2>
-                    </div>
-                    <div
-                        id="respiratory-warning"
-                        class="warning-message"
-                        style="display: none"
-                    >
-                        กรุณาเลือกช่วงอายุเพื่อดูเกณฑ์การประเมินที่เหมาะสม
-                    </div>
-                    <div
-                        id="rr-input-container"
-                        class="vital-input-container"
-                        style="display: none"
-                    >
-                        <label for="rr-input">กรอกการหายใจ (อัตราการหายใจ):</label>
-                        <input
-                            type="number"
-                            id="rr-input"
-                            placeholder="ครั้ง/นาที"
-                            min="0"
-                            max="200"
-                        />
-                        <span class="unit-text">ครั้ง/นาที</span>
-                    </div>
-                    <div class="score-grid" id="respiratory-grid"></div>
-                </section>
-
-                <section class="scoring-section">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="additional-risk" />
-                        <span
-                            >พ่นยาละอองฝอยทุก 15 นาที
-                            หรือมีอาการอาเจียนต่อเนื่องหลังผ่าตัด</span
-                        >
-                        <span class="score-badge">+2</span>
-                    </label>
-                </section>
-
-                <div id="total-score-display" class="total-score"></div>
-
-                <div class="vital-signs-section">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h3>📊 สัญญาณชีพ (Vital Signs)</h3>
-                        <button id="chd-btn" class="chd-button" type="button">
-                            Congenital heart disease
-                        </button>
-                    </div>
-                    <div id="chd-selected" class="chd-selected" style="display: none;"></div>
-                    <div class="vital-signs-grid">
-                        <div class="vital-input-group">
-                            <label for="temp-input">Temp (°C)</label>
-                            <input
-                                type="number"
-                                id="temp-input"
-                                placeholder="กรอกอุณหภูมิ"
-                                step="0.1"
-                                min="30"
-                                max="45"
-                            />
-                        </div>
-                        <div class="vital-input-group">
-                            <label for="pulse-input">PR (bpm)</label>
-                            <input
-                                type="number"
-                                id="pulse-input"
-                                placeholder="กรอกชีพจร"
-                                min="0"
-                                max="300"
-                            />
-                        </div>
-                        <div class="vital-input-group">
-                            <label for="rr-vs-input">RR (tpm)</label>
-                            <input
-                                type="number"
-                                id="rr-vs-input"
-                                placeholder="กรอกการหายใจ"
-                                min="0"
-                                max="200"
-                            />
-                        </div>
-                        <div class="vital-input-group">
-                            <label for="bp-input">BP (mmHg)</label>
-                            <input
-                                type="text"
-                                id="bp-input"
-                                placeholder="กรอก BP"
-                                maxlength="7"
-                            />
-                        </div>
-                        <div class="vital-input-group">
-                            <label for="spo2-input">SpO₂ (%)</label>
-                            <input
-                                type="number"
-                                id="spo2-input"
-                                placeholder="กรอก SpO₂"
-                                min="0"
-                                max="100"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="patient-form">
-                    <h3>
-                        📋 บันทึกข้อมูล
-                        <button id="pals-button" class="pals-button">PALS</button>
-                    </h3>
-
-                    <div class="form-section">
-                        <label for="nursing-notes">การพยาบาล</label>
-                        <textarea
-                            id="nursing-notes"
-                            rows="3"
-                            placeholder="บันทึกการพยาบาล..."
-                        ></textarea>
-                    </div>
-
-                    <div class="form-section">
-                        <label>อาการเปลี่ยนแปลงขณะรอตรวจ</label>
-                        <div class="symptoms-buttons">
-                            <button class="symptom-btn" data-value="yes">
-                                มี
-                            </button>
-                            <button class="symptom-btn active" data-value="no">
-                                ไม่มี
-                            </button>
-                        </div>
-                    </div>
-
-                    <div
-                        class="form-section"
-                        id="transfer-destination-section"
-                        style="display: none"
-                    >
-                        <label for="transfer-destination-select"
-                            >ส่งต่อไปที่</label
-                        >
-                        <select
-                            id="transfer-destination-select"
-                            class="transfer-select"
-                        >
-                            <option value="">-- เลือกสถานที่ส่งต่อ --</option>
-                            <option value="จุด Triage">จุด Triage</option>
-                            <option value="ER">ER</option>
-                            <option value="OPD 27">OPD 27</option>
-                            <option value="OPD 28">OPD 28</option>
-                            <option value="OPD 29">OPD 29</option>
-                            <option value="EID">EID</option>
-                            <option value="อื่นๆ">อื่นๆ</option>
-                        </select>
-                        <input
-                            type="text"
-                            id="transfer-destination-other"
-                            placeholder="กรุณาระบุสถานที่ส่งต่อ"
-                            style="display: none; margin-top: 0.5rem"
-                        />
-                    </div>
-
-                    <div class="action-buttons">
-                        <button class="action-btn btn-transfer">
-                            → ส่งต่อ
-                        </button>
-                        <button class="action-btn btn-reset">↻ รีเซ็ต</button>
-                    </div>
-                </div>
-
-                <div class="records-history">
-                    <h3>ประวัติการบันทึก</h3>
-                    <div id="records-list"></div>
-                </div>
-            </main>
-        </div>
-
-        <!-- CHD Modal -->
-        <div id="chd-modal" class="modal" style="display: none;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2> Congenital Heart Disease</h2>
-                    <button class="modal-close" id="modal-close">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <p style="margin-bottom: 1.5rem; color: #6b7280;">เลือกประเภท CHD:</p>
-                    <div class="chd-options">
-                        <button class="chd-option-btn" data-chd="acyanotic">
-                            <span class="chd-icon"></span>
-                            <span class="chd-text">Acyanotic CHD</span>
-                        </button>
-                        <button class="chd-option-btn" data-chd="cyanotic">
-                            <span class="chd-icon"></span>
-                            <span class="chd-text">Cyanotic CHD</span>
-                        </button>
+                    <div class="vital-input">
+                        <label for="spo2">SpO₂ (%)</label>
+                        <input type="number" id="spo2" min="0" max="100" placeholder="%">
                     </div>
                 </div>
             </div>
-        </div>
 
-        <script src="script.js"></script>
-    </body>
+            <div class="form-section">
+                <h3>Behavior</h3>
+                <div class="score-grid" id="behavior-grid"></div>
+            </div>
+
+            <div class="form-section">
+                <h3>Cardiovascular</h3>
+                <div class="score-grid" id="cardiovascular-grid"></div>
+            </div>
+
+            <div class="form-section">
+                <h3>Respiratory</h3>
+                <div class="score-grid" id="respiratory-grid"></div>
+            </div>
+
+            <div class="form-section">
+                <div class="additional-risk">
+                    <label>
+                        <input type="checkbox" id="additional-risk">
+                        Additional Risk (ติ๊กถ้ามี)
+                    </label>
+                </div>
+                <button type="button" id="pals-button" class="pals-button">PALS</button>
+            </div>
+
+            <div class="total-score-display" id="total-score-display">
+                <div class="score-label">คะแนนรวม PEWS</div>
+                <div class="score-value" id="score-value">0</div>
+                <div class="risk-level" id="risk-level">Risk Level: Low</div>
+            </div>
+
+            <div class="form-section">
+                <label for="nursing-notes">Nursing Notes</label>
+                <textarea id="nursing-notes" rows="3" placeholder="บันทึกข้อมูลเพิ่มเติม..."></textarea>
+            </div>
+
+            <div class="form-section">
+                <label for="transfer-destination">Transfer Destination</label>
+                <input type="text" id="transfer-destination" placeholder="ระบุจุดหมายปลายทาง">
+            </div>
+
+            <div class="form-section">
+                <button type="button" id="submit-button" class="submit-button">บันทึกข้อมูล</button>
+            </div>
+
+            <div id="records-section" class="records-section" style="display:none;">
+                <h3>ประวัติการบันทึก</h3>
+                <div id="records-list"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- CHD Dialog -->
+    <div id="chd-dialog" class="dialog" style="display:none;">
+        <div class="dialog-content">
+            <h3>เลือกประเภท CHD</h3>
+            <div class="chd-options">
+                <button type="button" class="chd-option-btn" data-type="acyanotic">Acyanotic CHD</button>
+                <button type="button" class="chd-option-btn" data-type="cyanotic">Cyanotic CHD</button>
+            </div>
+            <button type="button" id="chd-dialog-close" class="dialog-close">ปิด</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
 </html>
