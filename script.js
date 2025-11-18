@@ -232,11 +232,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const chdSelected = document.getElementById('chd-selected');
             const displayText = chdType === 'acyanotic' ? 'Acyanotic CHD' : 'Cyanotic CHD';
-            const icon = chdType === 'acyanotic' ? '' : '';
+            const icon = chdType === 'acyanotic' ? '○' : '●';
 
             chdSelected.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span>${icon}</span>
+                    <span style="font-size: 1.25rem;">${icon}</span>
                     <span style="font-weight: 600;">${displayText}</span>
                     <button onclick="clearCHD()" style="margin-left: auto; padding: 0.25rem 0.5rem; background: #ef4444; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">ยกเลิก</button>
                 </div>
@@ -502,8 +502,8 @@ function saveRecord(action) {
     const additional = state.additionalRisk ? 2 : 0;
     const total = behavior + cardiovascular + respiratory + additional;
 
-    const locationValue = state.location === 'อื่นๆ' 
-        ? `อื่นๆ: ${state.locationOther}` 
+    const locationValue = state.location === 'อื่นๆ'
+        ? `อื่นๆ: ${state.locationOther}`
         : state.location;
 
     const transferValue = state.transferDestination === 'อื่นๆ'
@@ -619,7 +619,7 @@ function renderRecords() {
                                 </div>
                                 <div class="data-item">
                                     <span class="data-label">SpO₂</span>
-                                    <span class="data-value">${parentRecord.spo2}%</span>
+                                    <span class="data-value">${record.spo2}%</span>
                                 </div>
                             </div>
                         </div>
@@ -666,8 +666,8 @@ function renderRecords() {
             `;
         }
         const riskLevel = getRiskLevel(record.totalScore);
-        const scoreColorClass = riskLevel === 'low' ? 'score-green' : 
-                                riskLevel === 'medium' ? 'score-yellow' : 
+        const scoreColorClass = riskLevel === 'low' ? 'score-green' :
+                                riskLevel === 'medium' ? 'score-yellow' :
                                 riskLevel === 'orange' ? 'score-orange' : 'score-red';
 
         return `
@@ -706,7 +706,7 @@ function renderRecords() {
                     ${record.chdType ? `
                     <div class="detail-row">
                         <span class="detail-label">CHD:</span>
-                        <span class="chd-badge">${record.chdType === 'acyanotic' ? '💙 Acyanotic CHD' : '💜 Cyanotic CHD'}</span>
+                        <span class="chd-badge">${record.chdType === 'acyanotic' ? '○ Acyanotic CHD' : '● Cyanotic CHD'}</span>
                     </div>
                     ` : ''}
                     ${record.palsEnabled ? `
