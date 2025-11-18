@@ -545,6 +545,9 @@ function saveRecord(action) {
         createdAt: new Date().toISOString()
     };
 
+    // Submit to Google Form
+    submitToGoogleForm(record);
+
     state.records.unshift(record);
     saveRecords();
     renderRecords();
@@ -908,4 +911,80 @@ function loadRecords() {
 
 function saveRecords() {
     localStorage.setItem('pewsRecords', JSON.stringify(state.records));
+}
+
+async function submitToGoogleForm(record) {
+    const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScfBir96VFdMNbhFrTx294HIbHky2YBxHs2bzWPn2WCI4krNQ/formResponse";
+
+    // Build all data parts
+    const allDataParts = [];
+    allDataParts.push(`Location: ${record.location}`);
+    
+    if (record.ageGroup) {
+        const ageGroupName = record.ageGroup.charAt(0).toUpperCase() + record.ageGroup.slice(1);
+        allDataParts.push(`Age Group: ${ageGroupName}`);
+    }
+    
+    allDataParts.push(`Total PEWS Score: ${record.totalScore}`);
+
+    // Vital signs
+    const vitals = [];
+    if (record.temperature && record.temperature !== 'ไม่ระบุ') vitals.push(`Temp: ${record.temperature}C`);
+    if (record.pulse && record.pulse !== 'ไม่ระบุ') vitals.push(`PR: ${record.pulse}`);
+    if (record.rrVitalSign && record.rrVitalSign !== 'ไม่ระบุ') vitals.push(`RR: ${record.rrVitalSign}`);
+    if (record.bloodPressure && record.bloodPressure !== 'ไม่ระบุ') vitals.push(`BP: ${record.bloodPressure}`);
+    if (record.spo2 && record.spo2 !== 'ไม่ระบุ') vitals.push(`SpO2: ${record.spo2}%`);
+    if (vitals.length > 0) {
+        allDataParts.push(`Vital Signs: ${vitals.join(", ")}`);
+    }
+
+    // Component scores
+    const scores = [];
+    if (record.behaviorScore !== null) scores.push(`Behavior: ${record.behaviorScore}`);
+    if (record.cardiovascularScore !== null) scores.push(`Cardio: ${record.cardiovascularScore}`);
+    if (record.respiratoryScore !== null) scores.push(`Resp: ${record.respiratoryScore}`);
+    if (scores.length > 0) {
+        allDataParts.push(`Component Scores: ${scores.join(", ")}`);
+    }
+
+    if (record.additionalRisk) allDataParts.push(`Additional Risk: Yes`);
+    if (record.nursingNotes) allDataParts.push(`Nursing Notes: ${record.nursingNotes}`);
+    if (record.transferDestination) allDataParts.push(`Transfer Destination: ${record.transferDestination}`);
+
+    const formData = new URLSearchParams();
+    formData.append("entry.1499630260", record.hn); // HN
+    formData.append("entry.2111986384", record.location); // สถานที่
+    formData.append("entry.1151417469", record.ageGroup || ""); // ช่วงอายุ
+    formData.append("entry.1622795877", record.totalScore.toString()); // คะแนนรวม
+
+    const vitalSignsData = allDataParts.join(' | ');
+    formData.append('entry.876819797', vitalSignsData); // Vital Signs & All Data
+
+    // CHD
+    if (record.chdType) {
+        const chdValue = record.chdType === 'acyanotic' ? 'Acyanotic CHD' : 'Cyanotic CHD';
+        formData.append('entry.813541969', chdValue);
+    }
+
+    // PALS
+    formData.append('entry.1654799629', record.palsEnabled ? 'Yes' : 'No');
+
+    // Reassessment
+    if (record.isReassessment) {
+        formData.append('entry.2125384468', `ประเมินซ้ำจาก Record ID: ${record.parentRecordId}`);
+    }
+
+    try {
+        await fetch(GOOGLE_FORM_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: formData.toString(),
+            mode: "no-cors",
+        });
+        console.log("Data submitted to Google Form successfully!");
+    } catch (error) {
+        console.error("Error submitting to Google Form:", error);
+    }
 }
