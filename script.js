@@ -951,13 +951,14 @@ async function submitToGoogleForm(record) {
     if (record.nursingNotes) allDataParts.push(`Nursing Notes: ${record.nursingNotes}`);
     if (record.transferDestination) allDataParts.push(`Transfer Destination: ${record.transferDestination}`);
 
-    const formData = new URLSearchParams();
-    formData.append("entry.1499630260", record.hn); // HN
-    formData.append("entry.2111986384", record.location); // สถานที่
+    const vitalSignsData = allDataParts.join(' | ');
+
+    // Create form data using FormData API for better compatibility
+    const formData = new FormData();
+    formData.append("entry.1499630260", record.hn || ""); // HN
+    formData.append("entry.2111986384", record.location || ""); // สถานที่
     formData.append("entry.1151417469", record.ageGroup || ""); // ช่วงอายุ
     formData.append("entry.1622795877", record.totalScore.toString()); // คะแนนรวม
-
-    const vitalSignsData = allDataParts.join(' | ');
     formData.append('entry.876819797', vitalSignsData); // Vital Signs & All Data
 
     // CHD
@@ -975,16 +976,16 @@ async function submitToGoogleForm(record) {
     }
 
     try {
-        await fetch(GOOGLE_FORM_URL, {
+        // Use fetch with no-cors mode
+        const response = await fetch(GOOGLE_FORM_URL, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: formData.toString(),
+            body: formData,
             mode: "no-cors",
         });
         console.log("Data submitted to Google Form successfully!");
+        return true;
     } catch (error) {
         console.error("Error submitting to Google Form:", error);
+        return false;
     }
 }
