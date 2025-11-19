@@ -80,6 +80,12 @@ let state = {
     records: []
 };
 
+// Flag สำหรับป้องกันการบันทึกซ้ำ
+let isSavingRecord = false;
+let lastSaveTime = 0;
+const SAVE_COOLDOWN = 2000;
+const submittedRecordIds = new Set(); 
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     loadRecords();
@@ -136,48 +142,42 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('temp-input').addEventListener('input', (e) => {
         state.temperature = e.target.value;
     });
-
     document.getElementById('pulse-input').addEventListener('input', (e) => {
         state.pulse = e.target.value;
     });
-
     document.getElementById('rr-vs-input').addEventListener('input', (e) => {
         state.rrVitalSign = e.target.value;
     });
 
-    // BP input with auto-formatting - supports 2-3 digit systolic pressure
+    // BP input with auto-formatting
     const bpInput = document.getElementById('bp-input');
     bpInput.addEventListener('input', (e) => {
-        let value = e.target.value.replace(/[^\d]/g, ''); // Remove non-digits
+        let value = e.target.value.replace(/[^\d]/g, ''); 
 
-        if (value.length > 2) {
-            // Auto-add "/" after 2-3 digits based on input
-            // If user types more than 2 digits, check if we should add slash
-            const firstPart = value.slice(0, 3);
-            const secondPart = value.slice(3);
+        if (value.length >= 4) {
+            let formatted = '';
 
-            if (secondPart.length > 0) {
-                value = firstPart + '/' + secondPart.slice(0, 3);
+            if (value.length === 4) {
+                formatted = value.slice(0, 2) + '/' + value.slice(2, 4);
+            } else if (value.length === 5) {
+                formatted = value.slice(0, 3) + '/' + value.slice(3, 5);
+            } else if (value.length >= 6) {
+                formatted = value.slice(0, 3) + '/' + value.slice(3, 6);
+            } else {
+                formatted = value; 
             }
-        }
 
-        e.target.value = value;
-        state.bloodPressure = value;
-    });
-
-    bpInput.addEventListener('keydown', (e) => {
-        // Allow backspace, delete, tab, arrow keys, and slash
-        if ([8, 9, 37, 38, 39, 40, 46, 191].includes(e.keyCode) || e.key === '/') {
-            return;
-        }
-        // Only allow numbers
-        if (e.key < '0' || e.key > '9') {
-            e.preventDefault();
+            e.target.value = formatted;
+            state.bloodPressure = formatted;
+        } else {
+            e.target.value = value;
+            state.bloodPressure = value;
         }
     });
 
     document.getElementById('spo2-input').addEventListener('input', (e) => {
         state.spo2 = e.target.value;
+        checkCyanoticCHDCondition();
     });
 
     document.getElementById('additional-risk').addEventListener('change', (e) => {
@@ -193,17 +193,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    document.querySelector('.btn-transfer').addEventListener('click', () => {
-        const transferSection = document.getElementById('transfer-destination-section');
-        if (transferSection.style.display === 'none') {
-            transferSection.style.display = 'block';
+    document.querySelector('.btn-transfer').addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (isSavingRecord) {
+            return;
+        }
+        
+        if (!state.transferDestination) {
+            alert('กรุณาเลือกสถานที่ส่งต่อ');
         } else {
             saveRecord('Transfer');
         }
     });
+
     document.querySelector('.btn-reset').addEventListener('click', resetForm);
 
-    // PALS button handler - toggle on/off
     const palsBtn = document.getElementById('pals-button');
     if (palsBtn) {
         palsBtn.addEventListener('click', () => {
@@ -242,12 +248,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
             chdSelected.style.display = 'block';
-
             document.getElementById('chd-modal').style.display = 'none';
+            checkCyanoticCHDCondition();
         });
     });
 
-    // Close modal on outside click
     window.addEventListener('click', (e) => {
         const modal = document.getElementById('chd-modal');
         if (e.target === modal) {
@@ -259,12 +264,51 @@ document.addEventListener('DOMContentLoaded', function() {
 function clearCHD() {
     state.chdType = '';
     document.getElementById('chd-selected').style.display = 'none';
+    checkCyanoticCHDCondition();
+}
+
+function checkCyanoticCHDCondition() {
+    const spo2 = parseFloat(state.spo2);
+    const isCyanotic = state.chdType === 'cyanotic';
+
+    if (isCyanotic && spo2 > 0 && spo2 < 75) {
+        const behavior = state.behaviorScore || 0;
+        const cardiovascular = state.cardiovascularScore || 0;
+        const respiratory = state.respiratoryScore || 0;
+        const additional = state.additionalRisk ? 2 : 0;
+        const currentTotal = behavior + cardiovascular + respiratory + additional;
+        const finalTotal = currentTotal + 4;
+
+        const totalScoreDisplay = document.getElementById('total-score-display');
+        const recommendation = finalTotal >= 4 ? 'ส่งต่อ ER โดยด่วน' : getRecommendation(finalTotal);
+        const riskLevel = finalTotal >= 4 ? 'high' : getRiskLevel(finalTotal);
+
+        totalScoreDisplay.className = `total-score ${riskLevel}`;
+        totalScoreDisplay.innerHTML = `
+            <div class="total-score-header">
+                ⚠ คะแนนรวม: <span class="total-score-number">${finalTotal}</span>
+            </div>
+            <div class="total-score-recommendation">${recommendation}</div>
+            <div style="margin-top: 0.75rem; padding: 0.75rem; background: #fee2e2; border: 2px solid #ef4444; border-radius: 0.5rem; font-size: 0.875rem; color: #991b1b;">
+                🚨 <strong>ตรวจพบ: Cyanotic CHD + SpO₂ < 75%</strong><br/>
+                <div style="margin-top: 0.5rem; padding: 0.5rem; background: white; border-radius: 0.25rem; font-family: monospace;">
+                    พฤติกรรม: ${behavior} + ไหลเวียน: ${cardiovascular} + หายใจ: ${respiratory}${additional > 0 ? ` + เสี่ยง: ${additional}` : ''} = ${currentTotal}<br/>
+                    <strong style="color: #dc2626;">+ Cyanotic CHD bonus: +4</strong><br/>
+                    <strong style="font-size: 1.1rem; color: #dc2626;">รวมทั้งหมด = ${finalTotal} คะแนน</strong>
+                </div>
+                ${finalTotal >= 4 ? '<strong style="color: #dc2626;">⚠️ ต้องส่งต่อ ER โดยด่วน!</strong>' : ''}
+            </div>
+        `;
+        document.getElementById('nursing-notes').value = recommendation;
+        state.nursingNotes = recommendation;
+    } else {
+        updateTotalScore();
+    }
 }
 
 function renderAgeGrid() {
     const grid = document.getElementById('age-grid');
     grid.innerHTML = '';
-
     ageGroups.forEach(age => {
         const button = document.createElement('button');
         button.className = 'age-button';
@@ -280,45 +324,42 @@ function renderAgeGrid() {
 function selectAge(ageId) {
     state.ageGroup = ageId;
     document.getElementById('age-error').style.display = 'none';
-
     document.querySelectorAll('.age-button').forEach((btn, index) => {
         btn.classList.toggle('selected', ageGroups[index].id === ageId);
     });
 
-    // Update vital signs info in section headers and show input containers
     const ageGroup = ageGroups.find(a => a.id === ageId);
     if (ageGroup) {
-        // Update cardiovascular header and show PR input
         const cardioHeader = document.querySelector('#cardiovascular-section .section-header h2');
         if (cardioHeader) {
             cardioHeader.innerHTML = `ระบบไหลเวียนโลหิต <span style="color: #2563eb; font-weight: 600; font-size: 0.9rem; margin-left: 0.5rem;">PR ปกติ : ${ageGroup.heartRate.min} - ${ageGroup.heartRate.max} ครั้ง/นาที</span>`;
         }
 
-        // Show PR input container
         const prContainer = document.getElementById('pr-input-container');
         if (prContainer) {
             prContainer.style.display = 'flex';
         }
 
-        // Update respiratory header and show RR input
         const respHeader = document.querySelector('#respiratory-section .section-header h2');
         if (respHeader) {
             respHeader.innerHTML = `ระบบทางเดินหายใจ <span style="color: #2563eb; font-weight: 600; font-size: 0.9rem; margin-left: 0.5rem;">RR ปกติ : ${ageGroup.respiratoryRate.min} - ${ageGroup.respiratoryRate.max} ครั้ง/นาที</span>`;
         }
 
-        // Show RR input container
         const rrContainer = document.getElementById('rr-input-container');
         if (rrContainer) {
             rrContainer.style.display = 'flex';
         }
 
-        // Add event listeners to vital signs inputs
         const prInput = document.getElementById('pr-input');
         const rrInput = document.getElementById('rr-input');
-
         if (prInput && !prInput.hasAttribute('data-listener')) {
             prInput.addEventListener('input', (e) => {
                 state.prValue = e.target.value;
+                const pulseInput = document.getElementById('pulse-input');
+                if (pulseInput) {
+                    pulseInput.value = e.target.value;
+                    state.pulse = e.target.value;
+                }
             });
             prInput.setAttribute('data-listener', 'true');
         }
@@ -326,6 +367,11 @@ function selectAge(ageId) {
         if (rrInput && !rrInput.hasAttribute('data-listener')) {
             rrInput.addEventListener('input', (e) => {
                 state.rrValue = e.target.value;
+                const rrVsInput = document.getElementById('rr-vs-input');
+                if (rrVsInput) {
+                    rrVsInput.value = e.target.value;
+                    state.rrVitalSign = e.target.value;
+                }
             });
             rrInput.setAttribute('data-listener', 'true');
         }
@@ -338,7 +384,6 @@ function selectAge(ageId) {
 function renderBehaviorGrid() {
     const grid = document.getElementById('behavior-grid');
     grid.innerHTML = '';
-
     behaviorOptions.forEach(option => {
         const button = document.createElement('button');
         button.className = 'score-button';
@@ -362,7 +407,6 @@ function selectBehavior(score) {
 function renderCardiovascularGrid() {
     const grid = document.getElementById('cardiovascular-grid');
     const warning = document.getElementById('cardiovascular-warning');
-
     if (!state.ageGroup) {
         warning.style.display = 'block';
         grid.innerHTML = '';
@@ -370,7 +414,6 @@ function renderCardiovascularGrid() {
     }
 
     warning.style.display = 'none';
-
     const ageDetails = ageGroups.find(a => a.id === state.ageGroup);
     const max = ageDetails.heartRate.max;
     const min = ageDetails.heartRate.min;
@@ -381,7 +424,6 @@ function renderCardiovascularGrid() {
         { score: 2, label: `ผิวสีเทา หรือ CRT 4 วินาที หรือ ชีพจร ≥${max + 20} ครั้ง/นาที` },
         { score: 3, label: `ผิวสีเทาและตัวลาย หรือ CRT ≥5 วินาที หรือ ชีพจร ≥${max + 30} ครั้ง/นาที หรือ ชีพจร ≤${min - 10} ครั้ง/นาที` }
     ];
-
     grid.innerHTML = '';
     options.forEach(option => {
         const button = document.createElement('button');
@@ -407,7 +449,6 @@ function selectCardiovascular(score) {
 function renderRespiratoryGrid() {
     const grid = document.getElementById('respiratory-grid');
     const warning = document.getElementById('respiratory-warning');
-
     if (!state.ageGroup) {
         warning.style.display = 'block';
         grid.innerHTML = '';
@@ -415,7 +456,6 @@ function renderRespiratoryGrid() {
     }
 
     warning.style.display = 'none';
-
     const ageDetails = ageGroups.find(a => a.id === state.ageGroup);
     const max = ageDetails.respiratoryRate.max;
     const min = ageDetails.respiratoryRate.min;
@@ -467,8 +507,6 @@ function updateTotalScore() {
         </div>
         <div class="total-score-recommendation">${recommendation}</div>
     `;
-
-    // Update nursing notes with recommendation based on score
     document.getElementById('nursing-notes').value = recommendation;
     state.nursingNotes = recommendation;
 }
@@ -488,7 +526,67 @@ function getRecommendation(score) {
     return 'รับบริการตามปกติ';
 }
 
-function saveRecord(action) {
+// ---------------------------------------------------------
+// ฟังก์ชันส่งข้อมูลไป Google Form (แก้ไขให้ส่งค่าแทนว่าง)
+// ---------------------------------------------------------
+async function submitToGoogleForm(record) {
+    if (submittedRecordIds.has(record.id)) {
+        return;
+    }
+
+    const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScfBir96VFdMNbhFrTx294HIbHky2YBxHs2bzWPn2WCI4krNQ/formResponse';
+    const formData = new FormData();
+
+    // ฟังก์ชันนี้สำคัญมาก: ถ้าค่าเป็นว่าง/null/undefined ให้ส่ง "-" แทน
+    // เพื่อป้องกัน Google Form ปฏิเสธรับข้อมูลกรณีเป็น Required Field
+    const safeText = (val) => {
+        if (val === undefined || val === null || String(val).trim() === '') {
+            return '-'; 
+        }
+        return String(val);
+    };
+
+    formData.append('entry.1499630260', safeText(record.hn));               
+    formData.append('entry.2111986384', safeText(record.location));         
+    formData.append('entry.1151417469', safeText(record.ageGroup));         
+    formData.append('entry.1622795877', safeText(record.totalScore));       
+
+    const vitalSigns = `Temp: ${record.temperature || '-'}°C, PR: ${record.pulse || '-'} bpm, RR: ${record.rrVitalSign || '-'} tpm, BP: ${record.bloodPressure || '-'} mmHg, SpO₂: ${record.spo2 || '-'}%`;
+    formData.append('entry.876819797', vitalSigns);                         
+
+    const scoreDetails = `พฤติกรรม: ${safeText(record.behaviorScore)}, ไหลเวียน: ${safeText(record.cardiovascularScore)}, หายใจ: ${safeText(record.respiratoryScore)}, เสี่ยง: ${record.additionalRisk ? 'มี' : 'ไม่มี'}`;
+    formData.append('entry.1330529947', scoreDetails);                      
+
+    formData.append('entry.813541969', safeText(record.chdType));           
+    formData.append('entry.1654799629', record.palsEnabled ? 'เปิดใช้งาน' : 'ไม่เปิดใช้งาน'); 
+    
+    // จุดเสี่ยง: ถ้า Nursing Note ว่าง ให้ส่งขีด
+    formData.append('entry.725936751', safeText(record.nursingNotes));      
+    formData.append('entry.877422297', safeText(record.transferDestination));
+    formData.append('entry.179224501', new Date(record.createdAt).toLocaleString('th-TH')); 
+    formData.append('entry.2125384468', record.isReassessment ? 'ใช่' : 'ไม่'); 
+
+    console.log(`📤 กำลังส่งข้อมูล ID: ${record.id} ไป Google Form...`);
+    submittedRecordIds.add(record.id);
+    
+    try {
+        await fetch(GOOGLE_FORM_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: formData
+        });
+        console.log(`✅ ส่งข้อมูล ID: ${record.id} สำเร็จ`);
+    } catch (error) {
+        console.error('❌ Error sending to Google Form:', error);
+        submittedRecordIds.delete(record.id);
+    }
+}
+
+async function saveRecord(action) {
+    const now = Date.now();
+    if (now - lastSaveTime < SAVE_COOLDOWN) return;
+    if (isSavingRecord) return;
+
     if (!state.ageGroup) {
         document.getElementById('age-error').style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -496,63 +594,98 @@ function saveRecord(action) {
         return;
     }
 
-    const behavior = state.behaviorScore || 0;
-    const cardiovascular = state.cardiovascularScore || 0;
-    const respiratory = state.respiratoryScore || 0;
-    const additional = state.additionalRisk ? 2 : 0;
-    const total = behavior + cardiovascular + respiratory + additional;
+    // ล็อกปุ่มทันทีป้องกันกดเบิ้ล
+    isSavingRecord = true;
+    lastSaveTime = now;
 
-    const locationValue = state.location === 'อื่นๆ'
-        ? `อื่นๆ: ${state.locationOther}`
-        : state.location;
+    const transferBtn = document.querySelector('.btn-transfer');
+    const originalBtnText = transferBtn ? transferBtn.innerHTML : ''; 
 
-    const transferValue = state.transferDestination === 'อื่นๆ'
-        ? `อื่นๆ: ${state.transferDestinationOther}`
-        : state.transferDestination;
+    if (transferBtn) {
+        transferBtn.disabled = true;
+        transferBtn.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite">⏳</span> กำลังส่ง...';
+        transferBtn.style.opacity = '0.7';
+        transferBtn.style.cursor = 'not-allowed';
+        
+        if (!document.getElementById('temp-spin-style')) {
+            const style = document.createElement('style');
+            style.id = 'temp-spin-style';
+            style.innerHTML = '@keyframes spin { 100% { transform: rotate(360deg); } }';
+            document.head.appendChild(style);
+        }
+    }
 
-    // Get vital signs values from inputs
-    const tempValue = document.getElementById('temp-input').value || 'ไม่ระบุ';
-    const pulseValue = document.getElementById('pulse-input').value || 'ไม่ระบุ';
-    const rrVsValue = document.getElementById('rr-vs-input').value || 'ไม่ระบุ';
-    const bpValue = document.getElementById('bp-input').value || 'ไม่ระบุ';
-    const spo2Value = document.getElementById('spo2-input').value || 'ไม่ระบุ';
+    try {
+        const behavior = state.behaviorScore || 0;
+        const cardiovascular = state.cardiovascularScore || 0;
+        const respiratory = state.respiratoryScore || 0;
+        const additional = state.additionalRisk ? 2 : 0;
+        let total = behavior + cardiovascular + respiratory + additional;
 
-    const record = {
-        id: Date.now().toString(),
-        hn: state.hn.trim() || 'ไม่ระบุ',
-        location: locationValue || 'ไม่ระบุ',
-        ageGroup: state.ageGroup,
-        behaviorScore: behavior,
-        cardiovascularScore: cardiovascular,
-        respiratoryScore: respiratory,
-        additionalRisk: state.additionalRisk,
-        totalScore: total,
-        nursingNotes: state.nursingNotes,
-        symptomsChanged: state.symptomsChanged,
-        action: action,
-        transferDestination: action === 'Transfer' ? transferValue : '',
-        prValue: state.prValue || 'ไม่ระบุ',
-        rrValue: state.rrValue || 'ไม่ระบุ',
-        temperature: tempValue,
-        pulse: pulseValue,
-        rrVitalSign: rrVsValue,
-        bloodPressure: bpValue,
-        spo2: spo2Value,
-        chdType: state.chdType || '',
-        palsEnabled: state.palsEnabled,
-        parentRecordId: state.parentRecordId,
-        isReassessment: state.isReassessment,
-        createdAt: new Date().toISOString()
-    };
+        const spo2 = parseFloat(state.spo2);
+        const isCyanotic = state.chdType === 'cyanotic';
+        if (isCyanotic && spo2 > 0 && spo2 < 75) {
+            total += 4;
+        }
 
-    // Submit to Google Form
-    submitToGoogleForm(record);
+        const locationValue = state.location === 'อื่นๆ' ? `อื่นๆ: ${state.locationOther}` : state.location;
+        const transferValue = state.transferDestination === 'อื่นๆ' ? `อื่นๆ: ${state.transferDestinationOther}` : state.transferDestination;
+        
+        const recordId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        
+        const record = {
+            id: recordId,
+            hn: state.hn.trim() || 'ไม่ระบุ',
+            location: locationValue || 'ไม่ระบุ',
+            ageGroup: state.ageGroup,
+            behaviorScore: behavior,
+            cardiovascularScore: cardiovascular,
+            respiratoryScore: respiratory,
+            additionalRisk: state.additionalRisk,
+            totalScore: total,
+            nursingNotes: state.nursingNotes,
+            symptomsChanged: state.symptomsChanged,
+            action: action,
+            transferDestination: transferValue || '',
+            prValue: state.prValue || 'ไม่ระบุ',
+            rrValue: state.rrValue || 'ไม่ระบุ',
+            temperature: state.temperature || '',
+            pulse: state.pulse || '',
+            rrVitalSign: state.rrVitalSign || '',
+            bloodPressure: state.bloodPressure || '',
+            spo2: state.spo2 || '',
+            chdType: state.chdType || '',
+            palsEnabled: state.palsEnabled,
+            parentRecordId: state.parentRecordId,
+            isReassessment: state.isReassessment,
+            createdAt: new Date().toISOString()
+        };
 
-    state.records.unshift(record);
-    saveRecords();
-    renderRecords();
-    alert(`บันทึกสำเร็จ\nบันทึกข้อมูลผู้ป่วย HN: ${record.hn} เรียบร้อยแล้ว`);
-    resetForm();
+        state.records.unshift(record);
+        saveRecords();
+        renderRecords();
+        
+        // ส่งข้อมูล
+        await submitToGoogleForm(record);
+        
+        alert(`บันทึกสำเร็จ\nบันทึกข้อมูลผู้ป่วย HN: ${record.hn} เรียบร้อยแล้ว`);
+        resetForm();
+
+    } catch (error) {
+        console.error('❌ เกิดข้อผิดพลาดในการบันทึก:', error);
+        alert('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง');
+    } finally {
+        if (transferBtn) {
+            transferBtn.disabled = false;
+            transferBtn.innerHTML = originalBtnText;
+            transferBtn.style.opacity = '1';
+            transferBtn.style.cursor = 'pointer';
+        }
+
+        setTimeout(() => {
+            isSavingRecord = false;
+        }, 1500);
+    }
 }
 
 function formatDateTime(isoString) {
@@ -579,7 +712,7 @@ function renderRecords() {
         return;
     }
 
-    container.innerHTML = state.records.map((record, index) => {
+    container.innerHTML = state.records.map((record) => {
         const ageGroup = ageGroups.find(a => a.id === record.ageGroup);
         const ageText = ageGroup ? `${ageGroup.name} (${ageGroup.ageRange})` : 'ไม่ระบุ';
         const isReassessment = record.isReassessment;
@@ -668,6 +801,7 @@ function renderRecords() {
                 </div>
             `;
         }
+
         const riskLevel = getRiskLevel(record.totalScore);
         const scoreColorClass = riskLevel === 'low' ? 'score-green' :
                                 riskLevel === 'medium' ? 'score-yellow' :
@@ -700,7 +834,13 @@ function renderRecords() {
                         <span class="detail-label">การดำเนินการ:</span>
                         <span class="action-badge">${record.action}</span>
                     </div>
-                    ${record.action === 'Transfer' && record.transferDestination ? `
+                    ${record.nursingNotes ? `
+                    <div class="detail-row">
+                        <span class="detail-label">การพยาบาล:</span>
+                        <span>${record.nursingNotes}</span>
+                    </div>
+                    ` : ''}
+                    ${record.transferDestination ? `
                     <div class="detail-row">
                         <span class="detail-label">ส่งต่อไปที่:</span>
                         <span class="transfer-badge">${record.transferDestination}</span>
@@ -770,25 +910,20 @@ function startReassessment(recordId) {
         return;
     }
 
-    // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Set reassessment state
     state.parentRecordId = recordId;
     state.isReassessment = true;
 
-    // Pre-fill form with previous data
     state.hn = record.hn;
     state.location = record.location;
     state.ageGroup = record.ageGroup;
 
     document.getElementById('hn-input-top').value = record.hn;
-    document.getElementById('location-select').value = record.location === 'อื่นๆ' ? record.location : (record.location || '');
+    document.getElementById('location-select').value = record.location.includes('อื่นๆ') ? 'อื่นๆ' : record.location;
 
-    // Select age group
     selectAge(record.ageGroup);
 
-    // Show reassessment indicator
     const formTitle = document.querySelector('h1');
     if (formTitle && !formTitle.innerHTML.includes('ประเมินซ้ำ')) {
         formTitle.innerHTML = formTitle.innerHTML + ' <span style="background: #fbbf24; color: white; padding: 0.25rem 0.75rem; border-radius: 0.5rem; margin-left: 0.5rem; font-size: 1rem;">กำลังประเมินซ้ำ</span>';
@@ -830,45 +965,37 @@ function resetForm() {
     document.getElementById('transfer-destination-select').value = '';
     document.getElementById('transfer-destination-other').value = '';
     document.getElementById('transfer-destination-other').style.display = 'none';
-    document.getElementById('transfer-destination-section').style.display = 'none';
     document.getElementById('additional-risk').checked = false;
     document.getElementById('age-error').style.display = 'none';
 
-    // Clear reassessment indicator from title
     const formTitle = document.querySelector('h1');
     if (formTitle) {
         formTitle.innerHTML = formTitle.innerHTML.replace(/<span style="background: #fbbf24.*?<\/span>/, '');
     }
 
-    // Reset PR and RR inputs
     const prInput = document.getElementById('pr-input');
     const rrInput = document.getElementById('rr-input');
     if (prInput) prInput.value = '';
     if (rrInput) rrInput.value = '';
 
-    // Reset vital signs inputs
     document.getElementById('temp-input').value = '';
     document.getElementById('pulse-input').value = '';
     document.getElementById('rr-vs-input').value = '';
     document.getElementById('bp-input').value = '';
     document.getElementById('spo2-input').value = '';
 
-    // Hide CHD selected
     document.getElementById('chd-selected').style.display = 'none';
 
-    // Reset PALS button
-    const palsBtn = document.getElementById('pals-btn');
+    const palsBtn = document.getElementById('pals-button');
     if (palsBtn) {
         palsBtn.classList.remove('active');
     }
 
-    // Hide vital signs input containers
     const prContainer = document.getElementById('pr-input-container');
     const rrContainer = document.getElementById('rr-input-container');
     if (prContainer) prContainer.style.display = 'none';
     if (rrContainer) rrContainer.style.display = 'none';
 
-    // Reset headers to default text
     const cardioHeader = document.querySelector('#cardiovascular-section .section-header h2');
     if (cardioHeader) {
         cardioHeader.innerHTML = 'ระบบไหลเวียนโลหิต';
@@ -911,81 +1038,4 @@ function loadRecords() {
 
 function saveRecords() {
     localStorage.setItem('pewsRecords', JSON.stringify(state.records));
-}
-
-async function submitToGoogleForm(record) {
-    const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScfBir96VFdMNbhFrTx294HIbHky2YBxHs2bzWPn2WCI4krNQ/formResponse";
-
-    // Build all data parts
-    const allDataParts = [];
-    allDataParts.push(`Location: ${record.location}`);
-    
-    if (record.ageGroup) {
-        const ageGroupName = record.ageGroup.charAt(0).toUpperCase() + record.ageGroup.slice(1);
-        allDataParts.push(`Age Group: ${ageGroupName}`);
-    }
-    
-    allDataParts.push(`Total PEWS Score: ${record.totalScore}`);
-
-    // Vital signs
-    const vitals = [];
-    if (record.temperature && record.temperature !== 'ไม่ระบุ') vitals.push(`Temp: ${record.temperature}C`);
-    if (record.pulse && record.pulse !== 'ไม่ระบุ') vitals.push(`PR: ${record.pulse}`);
-    if (record.rrVitalSign && record.rrVitalSign !== 'ไม่ระบุ') vitals.push(`RR: ${record.rrVitalSign}`);
-    if (record.bloodPressure && record.bloodPressure !== 'ไม่ระบุ') vitals.push(`BP: ${record.bloodPressure}`);
-    if (record.spo2 && record.spo2 !== 'ไม่ระบุ') vitals.push(`SpO2: ${record.spo2}%`);
-    if (vitals.length > 0) {
-        allDataParts.push(`Vital Signs: ${vitals.join(", ")}`);
-    }
-
-    // Component scores
-    const scores = [];
-    if (record.behaviorScore !== null) scores.push(`Behavior: ${record.behaviorScore}`);
-    if (record.cardiovascularScore !== null) scores.push(`Cardio: ${record.cardiovascularScore}`);
-    if (record.respiratoryScore !== null) scores.push(`Resp: ${record.respiratoryScore}`);
-    if (scores.length > 0) {
-        allDataParts.push(`Component Scores: ${scores.join(", ")}`);
-    }
-
-    if (record.additionalRisk) allDataParts.push(`Additional Risk: Yes`);
-    if (record.nursingNotes) allDataParts.push(`Nursing Notes: ${record.nursingNotes}`);
-    if (record.transferDestination) allDataParts.push(`Transfer Destination: ${record.transferDestination}`);
-
-    const vitalSignsData = allDataParts.join(' | ');
-
-    // Create form data using FormData API for better compatibility
-    const formData = new FormData();
-    formData.append("entry.1499630260", record.hn || ""); // HN
-    formData.append("entry.2111986384", record.location || ""); // สถานที่
-    formData.append("entry.1151417469", record.ageGroup || ""); // ช่วงอายุ
-    formData.append("entry.1622795877", record.totalScore.toString()); // คะแนนรวม
-    formData.append('entry.876819797', vitalSignsData); // Vital Signs & All Data
-
-    // CHD
-    if (record.chdType) {
-        const chdValue = record.chdType === 'acyanotic' ? 'Acyanotic CHD' : 'Cyanotic CHD';
-        formData.append('entry.813541969', chdValue);
-    }
-
-    // PALS
-    formData.append('entry.1654799629', record.palsEnabled ? 'Yes' : 'No');
-
-    // Reassessment
-    if (record.isReassessment) {
-        formData.append('entry.2125384468', `ประเมินซ้ำจาก Record ID: ${record.parentRecordId}`);
-    }
-
-    try {
-        // Use fetch with no-cors mode
-        const response = await fetch(GOOGLE_FORM_URL, {
-            method: "POST",
-            body: formData,
-            mode: "no-cors",
-        });
-        console.log("Data submitted to Google Form successfully!");
-        return true;
-    } catch (error) {
-        console.error("Error submitting to Google Form:", error);
-        return false;
-    }
 }
