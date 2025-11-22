@@ -96,6 +96,12 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTotalScore();
     renderRecords();
 
+    // ซ่อนช่องกรอกสถานที่ส่งต่ออื่นๆ เมื่อเริ่มโหลดหน้าเว็บ
+    const transferOtherInput = document.getElementById('transfer-destination-other');
+    if (transferOtherInput) {
+        transferOtherInput.style.display = 'none';
+    }
+
     // Event listeners
     document.getElementById('hn-input-top').addEventListener('input', (e) => {
         state.hn = e.target.value;
@@ -126,9 +132,9 @@ document.addEventListener('DOMContentLoaded', function() {
         state.transferDestination = e.target.value;
         const otherInput = document.getElementById('transfer-destination-other');
         if (e.target.value === 'อื่นๆ') {
-            otherInput.style.display = 'block';
+            otherInput.style.display = 'block'; 
         } else {
-            otherInput.style.display = 'none';
+            otherInput.style.display = 'none'; 
             state.transferDestinationOther = '';
             otherInput.value = '';
         }
@@ -527,7 +533,7 @@ function getRecommendation(score) {
 }
 
 // ---------------------------------------------------------
-// ฟังก์ชันส่งข้อมูลไป Google Form (แก้ไขให้ส่งค่าแทนว่าง)
+// ฟังก์ชันส่งข้อมูลไป Google Form (แก้ไขใหม่: เพิ่มรายละเอียดประเมินซ้ำ)
 // ---------------------------------------------------------
 async function submitToGoogleForm(record) {
     if (submittedRecordIds.has(record.id)) {
@@ -537,8 +543,6 @@ async function submitToGoogleForm(record) {
     const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScfBir96VFdMNbhFrTx294HIbHky2YBxHs2bzWPn2WCI4krNQ/formResponse';
     const formData = new FormData();
 
-    // ฟังก์ชันนี้สำคัญมาก: ถ้าค่าเป็นว่าง/null/undefined ให้ส่ง "-" แทน
-    // เพื่อป้องกัน Google Form ปฏิเสธรับข้อมูลกรณีเป็น Required Field
     const safeText = (val) => {
         if (val === undefined || val === null || String(val).trim() === '') {
             return '-'; 
@@ -560,8 +564,35 @@ async function submitToGoogleForm(record) {
     formData.append('entry.813541969', safeText(record.chdType));           
     formData.append('entry.1654799629', record.palsEnabled ? 'เปิดใช้งาน' : 'ไม่เปิดใช้งาน'); 
     
-    // จุดเสี่ยง: ถ้า Nursing Note ว่าง ให้ส่งขีด
-    formData.append('entry.725936751', safeText(record.nursingNotes));      
+    // ---------------------------------------------------
+    // ส่วนที่แก้ไข: จัดการข้อความ Note กรณีประเมินซ้ำ
+    // ---------------------------------------------------
+    let notesToSend = safeText(record.nursingNotes);
+
+    if (record.isReassessment && record.parentRecordId) {
+        // ค้นหาบันทึกเก่าจาก state เพื่อนำมาเปรียบเทียบ
+        const parent = state.records.find(r => r.id === record.parentRecordId);
+        
+        if (parent) {
+            // สร้างข้อความเปรียบเทียบ
+            const scoreComparison = `คะแนน: ${parent.totalScore} ➜ ${record.totalScore}`;
+            const symptomComparison = `อาการเปลี่ยน: ${parent.symptomsChanged === 'yes' ? 'มี' : 'ไม่มี'} ➜ ${record.symptomsChanged === 'yes' ? 'มี' : 'ไม่มี'}`;
+            
+            // รวมข้อความ
+            const comparisonInfo = `[ประเมินซ้ำ] ${scoreComparison} | ${symptomComparison}`;
+            
+            // นำไปแปะไว้หน้า Nursing Note เดิม
+            if (notesToSend === '-') {
+                notesToSend = comparisonInfo;
+            } else {
+                notesToSend = `${comparisonInfo} | Note: ${notesToSend}`;
+            }
+        }
+    }
+    
+    formData.append('entry.725936751', notesToSend); 
+    // ---------------------------------------------------
+
     formData.append('entry.877422297', safeText(record.transferDestination));
     formData.append('entry.179224501', new Date(record.createdAt).toLocaleString('th-TH')); 
     formData.append('entry.2125384468', record.isReassessment ? 'ใช่' : 'ไม่'); 
