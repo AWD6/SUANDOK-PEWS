@@ -83,8 +83,8 @@ let state = {
 // Flag สำหรับป้องกันการบันทึกซ้ำ
 let isSavingRecord = false;
 let lastSaveTime = 0;
-const SAVE_COOLDOWN = 2000;
-const submittedRecordIds = new Set(); 
+const SAVE_COOLDOWN = 2000; // ห้ามบันทึกซ้ำภายใน 2 วินาที
+const submittedRecordIds = new Set(); // เก็บ ID ทั้งหมดที่ส่งไปแล้ว
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
@@ -142,29 +142,34 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('temp-input').addEventListener('input', (e) => {
         state.temperature = e.target.value;
     });
+
     document.getElementById('pulse-input').addEventListener('input', (e) => {
         state.pulse = e.target.value;
     });
+
     document.getElementById('rr-vs-input').addEventListener('input', (e) => {
         state.rrVitalSign = e.target.value;
     });
 
-    // BP input with auto-formatting
+    // BP input with auto-formatting (2-3 digits systolic / 2-3 digits diastolic)
     const bpInput = document.getElementById('bp-input');
     bpInput.addEventListener('input', (e) => {
-        let value = e.target.value.replace(/[^\d]/g, ''); 
+        let value = e.target.value.replace(/[^\d]/g, ''); // เอาเฉพาะตัวเลข
 
         if (value.length >= 4) {
             let formatted = '';
 
             if (value.length === 4) {
+                // 2 หลัก / 2 หลัก
                 formatted = value.slice(0, 2) + '/' + value.slice(2, 4);
             } else if (value.length === 5) {
+                // 3 หลัก / 2 หลัก
                 formatted = value.slice(0, 3) + '/' + value.slice(3, 5);
             } else if (value.length >= 6) {
+                // เกิน 5 หลัก → บังคับ 3/3 (กัน input เกิน)
                 formatted = value.slice(0, 3) + '/' + value.slice(3, 6);
             } else {
-                formatted = value; 
+                formatted = value; // น้อยกว่า 4 ยังไม่ต้องใส่ slash
             }
 
             e.target.value = formatted;
@@ -197,7 +202,9 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         e.stopPropagation();
         
+        // ป้องกันการกดซ้ำ
         if (isSavingRecord) {
+            console.log('⛔ กำลังบันทึกอยู่ กรุณารอสักครู่');
             return;
         }
         
@@ -210,6 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelector('.btn-reset').addEventListener('click', resetForm);
 
+    // PALS button handler
     const palsBtn = document.getElementById('pals-button');
     if (palsBtn) {
         palsBtn.addEventListener('click', () => {
@@ -248,11 +256,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
             chdSelected.style.display = 'block';
+
             document.getElementById('chd-modal').style.display = 'none';
+
+            // Check condition
             checkCyanoticCHDCondition();
         });
     });
 
+    // Close modal on outside click
     window.addEventListener('click', (e) => {
         const modal = document.getElementById('chd-modal');
         if (e.target === modal) {
@@ -260,6 +272,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+function toast(message) {
+    const existingToast = document.querySelector('.custom-toast');
+    if (existingToast) existingToast.remove();
+
+    const toastEl = document.createElement('div');
+    toastEl.className = 'custom-toast';
+    toastEl.textContent = message;
+    toastEl.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #3b82f6; color: white; padding: 1rem 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999; animation: slideIn 0.3s ease-out;';
+    document.body.appendChild(toastEl);
+
+    setTimeout(() => {
+        toastEl.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => toastEl.remove(), 300);
+    }, 3000);
+}
 
 function clearCHD() {
     state.chdType = '';
@@ -272,13 +300,17 @@ function checkCyanoticCHDCondition() {
     const isCyanotic = state.chdType === 'cyanotic';
 
     if (isCyanotic && spo2 > 0 && spo2 < 75) {
+        // Calculate current score from selected options
         const behavior = state.behaviorScore || 0;
         const cardiovascular = state.cardiovascularScore || 0;
         const respiratory = state.respiratoryScore || 0;
         const additional = state.additionalRisk ? 2 : 0;
         const currentTotal = behavior + cardiovascular + respiratory + additional;
+
+        // Add +4 for Cyanotic CHD + SpO2 < 75%
         const finalTotal = currentTotal + 4;
 
+        // Show warning message with breakdown
         const totalScoreDisplay = document.getElementById('total-score-display');
         const recommendation = finalTotal >= 4 ? 'ส่งต่อ ER โดยด่วน' : getRecommendation(finalTotal);
         const riskLevel = finalTotal >= 4 ? 'high' : getRiskLevel(finalTotal);
@@ -299,6 +331,8 @@ function checkCyanoticCHDCondition() {
                 ${finalTotal >= 4 ? '<strong style="color: #dc2626;">⚠️ ต้องส่งต่อ ER โดยด่วน!</strong>' : ''}
             </div>
         `;
+
+        // Update nursing notes
         document.getElementById('nursing-notes').value = recommendation;
         state.nursingNotes = recommendation;
     } else {
@@ -309,6 +343,7 @@ function checkCyanoticCHDCondition() {
 function renderAgeGrid() {
     const grid = document.getElementById('age-grid');
     grid.innerHTML = '';
+
     ageGroups.forEach(age => {
         const button = document.createElement('button');
         button.className = 'age-button';
@@ -324,10 +359,12 @@ function renderAgeGrid() {
 function selectAge(ageId) {
     state.ageGroup = ageId;
     document.getElementById('age-error').style.display = 'none';
+
     document.querySelectorAll('.age-button').forEach((btn, index) => {
         btn.classList.toggle('selected', ageGroups[index].id === ageId);
     });
 
+    // Update vital signs info in section headers
     const ageGroup = ageGroups.find(a => a.id === ageId);
     if (ageGroup) {
         const cardioHeader = document.querySelector('#cardiovascular-section .section-header h2');
@@ -352,9 +389,11 @@ function selectAge(ageId) {
 
         const prInput = document.getElementById('pr-input');
         const rrInput = document.getElementById('rr-input');
+
         if (prInput && !prInput.hasAttribute('data-listener')) {
             prInput.addEventListener('input', (e) => {
                 state.prValue = e.target.value;
+                // Sync to pulse input
                 const pulseInput = document.getElementById('pulse-input');
                 if (pulseInput) {
                     pulseInput.value = e.target.value;
@@ -367,6 +406,7 @@ function selectAge(ageId) {
         if (rrInput && !rrInput.hasAttribute('data-listener')) {
             rrInput.addEventListener('input', (e) => {
                 state.rrValue = e.target.value;
+                // Sync to RR vital sign input
                 const rrVsInput = document.getElementById('rr-vs-input');
                 if (rrVsInput) {
                     rrVsInput.value = e.target.value;
@@ -384,6 +424,7 @@ function selectAge(ageId) {
 function renderBehaviorGrid() {
     const grid = document.getElementById('behavior-grid');
     grid.innerHTML = '';
+
     behaviorOptions.forEach(option => {
         const button = document.createElement('button');
         button.className = 'score-button';
@@ -407,6 +448,7 @@ function selectBehavior(score) {
 function renderCardiovascularGrid() {
     const grid = document.getElementById('cardiovascular-grid');
     const warning = document.getElementById('cardiovascular-warning');
+
     if (!state.ageGroup) {
         warning.style.display = 'block';
         grid.innerHTML = '';
@@ -414,6 +456,7 @@ function renderCardiovascularGrid() {
     }
 
     warning.style.display = 'none';
+
     const ageDetails = ageGroups.find(a => a.id === state.ageGroup);
     const max = ageDetails.heartRate.max;
     const min = ageDetails.heartRate.min;
@@ -424,6 +467,7 @@ function renderCardiovascularGrid() {
         { score: 2, label: `ผิวสีเทา หรือ CRT 4 วินาที หรือ ชีพจร ≥${max + 20} ครั้ง/นาที` },
         { score: 3, label: `ผิวสีเทาและตัวลาย หรือ CRT ≥5 วินาที หรือ ชีพจร ≥${max + 30} ครั้ง/นาที หรือ ชีพจร ≤${min - 10} ครั้ง/นาที` }
     ];
+
     grid.innerHTML = '';
     options.forEach(option => {
         const button = document.createElement('button');
@@ -449,6 +493,7 @@ function selectCardiovascular(score) {
 function renderRespiratoryGrid() {
     const grid = document.getElementById('respiratory-grid');
     const warning = document.getElementById('respiratory-warning');
+
     if (!state.ageGroup) {
         warning.style.display = 'block';
         grid.innerHTML = '';
@@ -456,6 +501,7 @@ function renderRespiratoryGrid() {
     }
 
     warning.style.display = 'none';
+
     const ageDetails = ageGroups.find(a => a.id === state.ageGroup);
     const max = ageDetails.respiratoryRate.max;
     const min = ageDetails.respiratoryRate.min;
@@ -507,6 +553,7 @@ function updateTotalScore() {
         </div>
         <div class="total-score-recommendation">${recommendation}</div>
     `;
+
     document.getElementById('nursing-notes').value = recommendation;
     state.nursingNotes = recommendation;
 }
@@ -526,66 +573,68 @@ function getRecommendation(score) {
     return 'รับบริการตามปกติ';
 }
 
-// ---------------------------------------------------------
-// ฟังก์ชันส่งข้อมูลไป Google Form (แก้ไขให้ส่งค่าแทนว่าง)
-// ---------------------------------------------------------
+// ฟังก์ชันส่งข้อมูลไป Google Form (ครั้งเดียวต่อ ID)
 async function submitToGoogleForm(record) {
+    // ตรวจสอบว่าเคยส่ง ID นี้ไปแล้วหรือไม่
     if (submittedRecordIds.has(record.id)) {
+        console.log(`⛔ ข้ามการส่งซ้ำ - ID ${record.id} ถูกส่งไปแล้ว`);
         return;
     }
 
     const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScfBir96VFdMNbhFrTx294HIbHky2YBxHs2bzWPn2WCI4krNQ/formResponse';
+
+    // สร้าง FormData สำหรับส่ง
     const formData = new FormData();
 
-    // ฟังก์ชันนี้สำคัญมาก: ถ้าค่าเป็นว่าง/null/undefined ให้ส่ง "-" แทน
-    // เพื่อป้องกัน Google Form ปฏิเสธรับข้อมูลกรณีเป็น Required Field
-    const safeText = (val) => {
-        if (val === undefined || val === null || String(val).trim() === '') {
-            return '-'; 
-        }
-        return String(val);
-    };
+    // Map ข้อมูลไปยัง entry ID ของ Google Form ตามที่ดูจาก HTML source
+    formData.append('entry.1499630260', record.hn || ''); // HN
+    formData.append('entry.2111986384', record.location || ''); // สถานที่
+    formData.append('entry.1151417469', record.ageGroup || ''); // ช่วงอายุ
+    formData.append('entry.1622795877', record.totalScore || ''); // คะแนนรวม PEWS
 
-    formData.append('entry.1499630260', safeText(record.hn));               
-    formData.append('entry.2111986384', safeText(record.location));         
-    formData.append('entry.1151417469', safeText(record.ageGroup));         
-    formData.append('entry.1622795877', safeText(record.totalScore));       
+    // Vital Signs - รวมเป็น string เดียว
+    const vitalSigns = `Temp: ${record.temperature}°C, PR: ${record.pulse} bpm, RR: ${record.rrVitalSign} tpm, BP: ${record.bloodPressure} mmHg, SpO₂: ${record.spo2}%`;
+    formData.append('entry.876819797', vitalSigns); // Vital Signs
 
-    const vitalSigns = `Temp: ${record.temperature || '-'}°C, PR: ${record.pulse || '-'} bpm, RR: ${record.rrVitalSign || '-'} tpm, BP: ${record.bloodPressure || '-'} mmHg, SpO₂: ${record.spo2 || '-'}%`;
-    formData.append('entry.876819797', vitalSigns);                         
+    // รายละเอียดคะแนน
+    const scoreDetails = `พฤติกรรม: ${record.behaviorScore}, ไหลเวียน: ${record.cardiovascularScore}, หายใจ: ${record.respiratoryScore}, เสี่ยง: ${record.additionalRisk ? 'มี' : 'ไม่มี'}`;
+    formData.append('entry.1330529947', scoreDetails); // รายละเอียดคะแนน
 
-    const scoreDetails = `พฤติกรรม: ${safeText(record.behaviorScore)}, ไหลเวียน: ${safeText(record.cardiovascularScore)}, หายใจ: ${safeText(record.respiratoryScore)}, เสี่ยง: ${record.additionalRisk ? 'มี' : 'ไม่มี'}`;
-    formData.append('entry.1330529947', scoreDetails);                      
-
-    formData.append('entry.813541969', safeText(record.chdType));           
-    formData.append('entry.1654799629', record.palsEnabled ? 'เปิดใช้งาน' : 'ไม่เปิดใช้งาน'); 
-    
-    // จุดเสี่ยง: ถ้า Nursing Note ว่าง ให้ส่งขีด
-    formData.append('entry.725936751', safeText(record.nursingNotes));      
-    formData.append('entry.877422297', safeText(record.transferDestination));
-    formData.append('entry.179224501', new Date(record.createdAt).toLocaleString('th-TH')); 
-    formData.append('entry.2125384468', record.isReassessment ? 'ใช่' : 'ไม่'); 
+    formData.append('entry.813541969', record.chdType || ''); // CHD
+    formData.append('entry.1654799629', record.palsEnabled ? 'เปิดใช้งาน' : ''); // PALS
+    formData.append('entry.725936751', record.nursingNotes || ''); // การพยาบาล
+    formData.append('entry.877422297', record.transferDestination || ''); // ส่งต่อไปที่
+    formData.append('entry.179224501', new Date(record.createdAt).toLocaleString('th-TH')); // เวลาบันทึก
+    formData.append('entry.2125384468', record.isReassessment ? 'ใช่' : 'ไม่'); // ประเมินซ้ำ
 
     console.log(`📤 กำลังส่งข้อมูล ID: ${record.id} ไป Google Form...`);
+    
+    // บันทึก ID ก่อนส่ง เพื่อป้องกันการส่งซ้ำ
     submittedRecordIds.add(record.id);
     
-    try {
-        await fetch(GOOGLE_FORM_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: formData
-        });
-        console.log(`✅ ส่งข้อมูล ID: ${record.id} สำเร็จ`);
-    } catch (error) {
-        console.error('❌ Error sending to Google Form:', error);
-        submittedRecordIds.delete(record.id);
-    }
+    // ส่งข้อมูลด้วย fetch (no-cors mode เพื่อหลีกเลี่ยง CORS error)
+    await fetch(GOOGLE_FORM_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData
+    });
+
+    console.log(`✅ ส่งข้อมูล ID: ${record.id} ไป Google Form สำเร็จ`);
 }
 
 async function saveRecord(action) {
+    // ตรวจสอบ cooldown - ป้องกันการกดปุ่มซ้ำภายในเวลาสั้นๆ
     const now = Date.now();
-    if (now - lastSaveTime < SAVE_COOLDOWN) return;
-    if (isSavingRecord) return;
+    if (now - lastSaveTime < SAVE_COOLDOWN) {
+        console.log("⛔ กรุณารอสักครู่ก่อนบันทึกอีกครั้ง");
+        return;
+    }
+
+    // ป้องกันการบันทึกซ้ำอย่างเข้มงวด
+    if (isSavingRecord) {
+        console.log("⛔ กำลังบันทึกอยู่ ป้องกันการบันทึกซ้ำ");
+        return;
+    }
 
     if (!state.ageGroup) {
         document.getElementById('age-error').style.display = 'block';
@@ -594,43 +643,35 @@ async function saveRecord(action) {
         return;
     }
 
-    // ล็อกปุ่มทันทีป้องกันกดเบิ้ล
+    // ตั้ง flag ป้องกันการบันทึกซ้ำทันที
     isSavingRecord = true;
     lastSaveTime = now;
-
-    const transferBtn = document.querySelector('.btn-transfer');
-    const originalBtnText = transferBtn ? transferBtn.innerHTML : ''; 
-
-    if (transferBtn) {
-        transferBtn.disabled = true;
-        transferBtn.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite">⏳</span> กำลังส่ง...';
-        transferBtn.style.opacity = '0.7';
-        transferBtn.style.cursor = 'not-allowed';
-        
-        if (!document.getElementById('temp-spin-style')) {
-            const style = document.createElement('style');
-            style.id = 'temp-spin-style';
-            style.innerHTML = '@keyframes spin { 100% { transform: rotate(360deg); } }';
-            document.head.appendChild(style);
-        }
-    }
+    console.log('🔒 เริ่มบันทึกข้อมูล...');
 
     try {
         const behavior = state.behaviorScore || 0;
         const cardiovascular = state.cardiovascularScore || 0;
         const respiratory = state.respiratoryScore || 0;
         const additional = state.additionalRisk ? 2 : 0;
-        let total = behavior + cardiovascular + respiratory + additional;
 
+        // Check for Cyanotic CHD + SpO2 < 75% condition
+        let total = behavior + cardiovascular + respiratory + additional;
         const spo2 = parseFloat(state.spo2);
         const isCyanotic = state.chdType === 'cyanotic';
+
         if (isCyanotic && spo2 > 0 && spo2 < 75) {
-            total += 4;
+            total += 4; // Add bonus for Cyanotic CHD + SpO2 < 75%
         }
 
-        const locationValue = state.location === 'อื่นๆ' ? `อื่นๆ: ${state.locationOther}` : state.location;
-        const transferValue = state.transferDestination === 'อื่นๆ' ? `อื่นๆ: ${state.transferDestinationOther}` : state.transferDestination;
-        
+        const locationValue = state.location === 'อื่นๆ'
+            ? `อื่นๆ: ${state.locationOther}`
+            : state.location;
+
+        const transferValue = state.transferDestination === 'อื่นๆ'
+            ? `อื่นๆ: ${state.transferDestinationOther}`
+            : state.transferDestination;
+
+        // สร้าง ID ที่ไม่ซ้ำด้วย timestamp + random
         const recordId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         
         const record = {
@@ -649,11 +690,11 @@ async function saveRecord(action) {
             transferDestination: transferValue || '',
             prValue: state.prValue || 'ไม่ระบุ',
             rrValue: state.rrValue || 'ไม่ระบุ',
-            temperature: state.temperature || '',
-            pulse: state.pulse || '',
-            rrVitalSign: state.rrVitalSign || '',
-            bloodPressure: state.bloodPressure || '',
-            spo2: state.spo2 || '',
+            temperature: state.temperature || 'ไม่ระบุ',
+            pulse: state.pulse || 'ไม่ระบุ',
+            rrVitalSign: state.rrVitalSign || 'ไม่ระบุ',
+            bloodPressure: state.bloodPressure || 'ไม่ระบุ',
+            spo2: state.spo2 || 'ไม่ระบุ',
             chdType: state.chdType || '',
             palsEnabled: state.palsEnabled,
             parentRecordId: state.parentRecordId,
@@ -661,13 +702,16 @@ async function saveRecord(action) {
             createdAt: new Date().toISOString()
         };
 
+        console.log('💾 บันทึกลง LocalStorage...');
+        // บันทึกลง LocalStorage
         state.records.unshift(record);
         saveRecords();
         renderRecords();
-        
-        // ส่งข้อมูล
+
+        console.log('📤 เรียกส่งข้อมูลไป Google Form (ครั้งเดียว)...');
+        // ส่งไป Google Form - ฟังก์ชันจะตรวจสอบซ้ำเองว่าส่งไปแล้วหรือยัง
         await submitToGoogleForm(record);
-        
+
         alert(`บันทึกสำเร็จ\nบันทึกข้อมูลผู้ป่วย HN: ${record.hn} เรียบร้อยแล้ว`);
         resetForm();
 
@@ -675,16 +719,11 @@ async function saveRecord(action) {
         console.error('❌ เกิดข้อผิดพลาดในการบันทึก:', error);
         alert('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง');
     } finally {
-        if (transferBtn) {
-            transferBtn.disabled = false;
-            transferBtn.innerHTML = originalBtnText;
-            transferBtn.style.opacity = '1';
-            transferBtn.style.cursor = 'pointer';
-        }
-
+        // ปลดล็อกหลังบันทึกเสร็จ
+        console.log('🔓 ปลดล็อกการบันทึก');
         setTimeout(() => {
             isSavingRecord = false;
-        }, 1500);
+        }, 500); // ลดเวลาปลดล็อกลง แต่ยังมี cooldown คุ้มกัน
     }
 }
 
